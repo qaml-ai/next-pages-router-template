@@ -1,0 +1,25 @@
+{
+  "name": "next-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/react-dom": "^19.1.6",
+    "@vscode/markdown-it-katex": "^1.1.1",
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.0",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/react": "latest",
+    "@types/node": "latest"
+  }
+}
