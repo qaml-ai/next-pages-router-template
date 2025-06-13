@@ -7,7 +7,10 @@ export interface ChatPageProps {
   connectedApps: any[]
   threadData: any
   modelOverride: string | null
+  artifactData?: any[]
 }
+
+// Component will be defined later in the file
 
 import ReactDOM from 'react-dom/client';
 import { createPortal } from 'react-dom';
@@ -15,16 +18,7 @@ import markdownit from 'markdown-it';
 import mk from '@vscode/markdown-it-katex';
 import hljs from 'highlight.js';
 
-window.copyCode = (codeBlock) => {
-	const copyMessage = codeBlock.querySelector('.copy-message');
-	const code = codeBlock.querySelector('code').innerText;
-	navigator.clipboard.writeText(code).then(() => {
-		copyMessage.style.visibility = 'visible';  // Show "Copied" message
-		setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000); // Hide after 2 seconds
-	}).catch(err => {
-		console.error('Failed to copy: ', err);
-	});
-};
+// Copy code functionality will be handled via React state and refs
 
 const md = new markdownit({
     highlight: function (str, lang) {
@@ -44,7 +38,7 @@ md.renderer.rules.fence = (tokens, idx, options, env, self) => {
             <span class="code-block-language">${langName || 'plaintext'}</span>
 			<div class="code-block-buttons">
 				<span class="copy-message" style="visibility: hidden;">Copied</span>
-				<button class="icon-button code-block-button" onclick="copyCode(this.closest('.code-block'))" data-tooltip="Copy code block">
+				<button class="icon-button code-block-button" onclick="window.handleCopyCode(this.closest('.code-block'))" data-tooltip="Copy code block">
 					<img src="/static/images/copy-icon.png" alt="Copy"/>
 				</button>
 			</div>
@@ -53,19 +47,9 @@ md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     </div>`;
 };
 
-md.use(mk.default, { throwOnError: false, output: 'mathml' });
+md.use(mk, { throwOnError: false, output: 'mathml' });
 
-window.autoOpenedArtifacts = [];
-// Build a map of artifact data keyed by artifact id for use in renderMarkdown
-const initialMessagesElement = document.getElementById('initial-messages');
-if (!initialMessagesElement) {
-    window.artifactDataMap = {};
-} else {
-    const artifactData = JSON.parse(initialMessagesElement.textContent).flatMap(msg => msg.artifacts || []);
-    const artifactDataMap = artifactData.reduce((map, artifact) => { map[artifact.id] = artifact; return map; }, {});
-    window.artifactDataMap = artifactDataMap;
-}
-function renderMarkdown(content) {
+function renderMarkdown(content: string, artifactDataMap: Record<string, any> = {}) {
 	if (!content) return null;
     let renderedHtml = md.render(
         content
@@ -93,7 +77,7 @@ function renderMarkdown(content) {
         const match = href.match(/\d+/);
         if (!match) return;
         const artifactId = Number(match[0]);
-        const artifact = window.artifactDataMap[artifactId] || {};
+        const artifact = artifactDataMap[artifactId] || {};
         const title = (artifact.title || '').trim();
         const is_chart = Boolean(artifact.is_chart);
         const description = artifact.description || '';
@@ -135,12 +119,8 @@ function renderMarkdown(content) {
     };
 }
 
-let connectedApps;
-const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
+const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, artifactDataMap, handleCopyCode }) => {
     if (tool_calls.length === 0) return null;
-    if (!connectedApps) {
-        connectedApps = JSON.parse(document.getElementById('connected-apps').textContent);
-    }
 
     const renderToolCall = useCallback((tool_call) => {
         let input = tool_call.input || {};
@@ -166,7 +146,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
 		input.code = input.code || '';
 		input.chart_code = input.chart_code || '';
         
-        let selectedConnection = connectedApps.find(app => app.id === input.connection_id);
+        let selectedConnection = connectedAppsState.find(app => app.id === input.connection_id);
         if (!selectedConnection) selectedConnection = {
             name: 'camel',
             account_name: 'camel',
@@ -214,7 +194,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
+                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
                                                             <img src="/static/images/copy-icon.png" alt="Copy"/>
@@ -253,7 +233,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
+                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
                                                             <img src="/static/images/copy-icon.png" alt="Copy"/>
@@ -304,7 +284,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
+                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
                                                             <img src="/static/images/copy-icon.png" alt="Copy"/>
@@ -333,7 +313,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                     </div>
                                     <div className="tool-call-body-content">
                                         <div className="tool-call-planning"
-                                             dangerouslySetInnerHTML={renderMarkdown(input.thought)} />
+                                             dangerouslySetInnerHTML={renderMarkdown(input.thought, artifactDataMap)} />
                                     </div>
                                 </>
                             );
@@ -382,13 +362,8 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-data-sources">
                                                 {input.queries.map((query, index) => {
-                                                    // Make sure connectedApps is initialized
-                                                    if (!connectedApps) {
-                                                        connectedApps = JSON.parse(document.getElementById('connected-apps').textContent);
-                                                    }
-                                                    
-                                                    // Find the connection details from connectedApps
-                                                    const connectionDetails = connectedApps.find(app => app.id === query.connection_id) || {};
+                                                    // Find the connection details from connectedAppsState
+                                                    const connectionDetails = connectedAppsState.find(app => app.id === query.connection_id) || {};
                                                     const connectionName = connectionDetails.name || 'unknown';
                                                     const accountName = connectionDetails.account_name || query.name;
                                                     
@@ -414,7 +389,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
+                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
                                                             <img src="/static/images/copy-icon.png" alt="Copy"/>
@@ -463,13 +438,8 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-data-sources">
                                                 {input.queries && input.queries.map((query, index) => {
-                                                    // Make sure connectedApps is initialized
-                                                    if (!connectedApps) {
-                                                        connectedApps = JSON.parse(document.getElementById('connected-apps').textContent);
-                                                    }
-                                                    
-                                                    // Find the connection details from connectedApps
-                                                    const connectionDetails = connectedApps.find(app => app.id === query.connection_id) || {};
+                                                    // Find the connection details from connectedAppsState
+                                                    const connectionDetails = connectedAppsState.find(app => app.id === query.connection_id) || {};
                                                     const connectionName = connectionDetails.name || 'unknown';
                                                     const accountName = connectionDetails.account_name || query.name;
                                                     
@@ -496,7 +466,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
                                                             <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                             <button 
                                                                 className="icon-button code-block-button" 
-                                                                onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
+                                                                onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
                                                                 data-tooltip="Copy code block"
                                                             >
                                                                 <img src="/static/images/copy-icon.png" alt="Copy"/>
@@ -544,7 +514,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom }) => {
     );
 });
 
-const TextMessagePart = React.memo(({ content, role }) => {
+const TextMessagePart = React.memo(({ content, role, artifactDataMap }) => {
     if (role === "user") {
 		return (
 			<div className="user-message-text">
@@ -555,13 +525,13 @@ const TextMessagePart = React.memo(({ content, role }) => {
 		return (
 			<div
 				className="camel-message-text"
-				dangerouslySetInnerHTML={renderMarkdown(content)}
+				dangerouslySetInnerHTML={renderMarkdown(content, artifactDataMap)}
 			/>
 		);
 	}
 });
 
-const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, threadId, isStreaming, isFinalMessage }) => {
+const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, threadId, isStreaming, isFinalMessage, connectedAppsState, artifactDataMap, handleCopyCode }) => {
     let { content, role, artifacts } = message;
 	if (role === 'hidden' || role === 'developer') return null;
 	let tool_calls = [];
@@ -577,14 +547,14 @@ const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, th
         return (
             <div className="user-message-container">
                 {/* User messages only have text content */}
-                {content && <TextMessagePart key={message.id} content={content} role={role} />}
+                {content && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
             </div>
         );
     } else if (isFinalMessage) {
         return (
             <>
                 {/* Renders the text of the message. Role is user or assistant and impacts styling */}
-                {content && <TextMessagePart key={message.id} content={content} role={role} />}
+                {content && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
 
                 {/* Renders the artifacts of the message. TODO: Update the styling of the artifacts in the final message */}
                 {/* {artifacts.length > 0 && (
@@ -611,9 +581,9 @@ const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, th
             <div className="tool-call-container">
                 {/* Renders the text of the message. Role is user or assistant and impacts styling */}
                 {/* NOTE: For backwards compatibility we don't show text message parts if there are tool calls present */}
-                {content && !tool_calls.length && <TextMessagePart key={message.id} content={content} role={role} />}
+                {content && !tool_calls.length && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
                 {/* Renders the tool calls of the message. */}
-                <ToolCalls tool_calls={tool_calls} scrollToBottom={scrollToBottom} />
+                <ToolCalls tool_calls={tool_calls} scrollToBottom={scrollToBottom} connectedAppsState={connectedAppsState} artifactDataMap={artifactDataMap} handleCopyCode={handleCopyCode} />
                 {/* Renders the artifacts of the message. */}
                 {artifacts.length > 0 && (
                     <>
@@ -923,9 +893,8 @@ export default function ChatPage({
 	const [isStreaming, setIsStreaming] = useState(false);
 	const isStreamingRef = useRef(isStreaming);
 	const chatContainerRef = useRef(null);
-	const [threadId, setThreadId] = useState(threadData.thread_id);
+	const [threadId, setThreadId] = useState(threadData?.thread_id || null);
 	const [model, setModel] = useState(() => {
-		const modelOverride = modelOverride;
 		if (modelOverride && availableModels[modelOverride]) {
 			return modelOverride;
 		}
@@ -933,7 +902,7 @@ export default function ChatPage({
 		const thread = threadData;
 		
 		// Prioritize thread model, then localStorage, then default
-        if (thread.model) {
+        if (thread?.model) {
             return thread.model;
         } else if (localStorage.getItem('lastSelectedModel') && availableModels[localStorage.getItem('lastSelectedModel')]) {
             return localStorage.getItem('lastSelectedModel');
@@ -947,9 +916,9 @@ export default function ChatPage({
 	const [retryMessage, setRetryMessage] = useState(null);
 	const [historyIndex, setHistoryIndex] = useState(-1);
 	const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
-	const [connectedApps] = useState(connectedApps);
+	const [connectedAppsState] = useState(connectedApps);
 	const [selectedDataSourcesIDs, setSelectedDataSourcesIDs] = useState([]);
-	const selectedDataSources = connectedApps.filter(app => selectedDataSourcesIDs.includes(app.id));
+	const selectedDataSources = connectedAppsState.filter(app => selectedDataSourcesIDs.includes(app.id));
 	const isThreadLocked = !!threadId;
 	// New state to track expanded/collapsed state for tool message groups
 	const [expandedGroups, setExpandedGroups] = useState({});
@@ -964,6 +933,42 @@ export default function ChatPage({
         useEffect(() => {
                 localStorage.setItem('autographMode', JSON.stringify(autographMode));
         }, [autographMode]);
+
+	// Build artifact data map from props
+	const [artifactDataMap, setArtifactDataMap] = useState<Record<string, any>>(() => {
+		const allArtifacts = threadData?.artifacts || initialMessages.flatMap(msg => msg.artifacts || []);
+		return allArtifacts.reduce((map, artifact) => {
+			map[artifact.id] = artifact;
+			return map;
+		}, {} as Record<string, any>);
+	});
+
+	// Handle code copying
+	const handleCopyCode = useCallback((codeBlock: HTMLElement) => {
+		if (!codeBlock) return;
+		
+		const copyMessage = codeBlock.querySelector('.copy-message') as HTMLElement;
+		const code = codeBlock.querySelector('code')?.innerText || '';
+		
+		navigator.clipboard.writeText(code).then(() => {
+			if (copyMessage) {
+				copyMessage.style.visibility = 'visible';
+				setTimeout(() => {
+					copyMessage.style.visibility = 'hidden';
+				}, 2000);
+			}
+		}).catch(err => {
+			console.error('Failed to copy:', err);
+		});
+	}, []);
+
+	// Make handleCopyCode available globally for markdown renderer
+	useEffect(() => {
+		(window as any).handleCopyCode = handleCopyCode;
+		return () => {
+			delete (window as any).handleCopyCode;
+		};
+	}, [handleCopyCode]);
 
 	// Effect to update lastSelectedModel in localstorage when model changes
 	useEffect(() => {
@@ -1061,12 +1066,12 @@ export default function ChatPage({
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
 	const artifacts = useMemo(() => messages.flatMap(msg => msg.artifacts).filter(Boolean).reverse(), [messages]);
 
-	// Update the global artifactDataMap when new artifacts arrive in messages
+	// Update the artifactDataMap when new artifacts arrive in messages
 	useEffect(() => {
 		const map = messages
 			.flatMap(msg => msg.artifacts || [])
 			.reduce((acc, art) => { acc[art.id] = art; return acc; }, {});
-		window.artifactDataMap = map;
+		setArtifactDataMap(map);
 	}, [messages]);
 
 	// Inside the App component, add this state variable with the other state declarations
@@ -1077,9 +1082,9 @@ export default function ChatPage({
 		const selected = selectedDataSourcesIDs[0];
 		const thread = threadData;
 		let stored = JSON.parse(localStorage.getItem(`dataSources_${threadId}`));
-		// If stored is not in connectedApps, set it to the first connected app
-		if (stored && !stored.some(id => connectedApps.some(app => app.id === id))) {
-			stored = [connectedApps[0].id];
+		// If stored is not in connectedAppsState, set it to the first connected app
+		if (stored && !stored.some(id => connectedAppsState.some(app => app.id === id))) {
+			stored = [connectedAppsState[0].id];
 		}
 		
 		// If thread has connection_ids, use those
@@ -1095,10 +1100,10 @@ export default function ChatPage({
 		setSelectedDataSourcesIDs(
 			selected ? [selected] : 
 			validStored.length > 0 ? validStored :
-			connectedApps[0]?.id ? [connectedApps[0].id] : 
+			connectedAppsState[0]?.id ? [connectedAppsState[0].id] : 
 			[]
 		);
-	}, [connectedApps]);
+	}, [connectedAppsState]);
 
 	// Data sources
 	useEffect(() => {
@@ -1505,6 +1510,7 @@ export default function ChatPage({
 		setConnectionIDForKnowledgeBase(false);
 	};
 
+
 	// Add a function to toggle the expanded/collapsed state of a tool message group
 	const toggleToolMessages = (groupId) => {
 		setExpandedGroups(prev => ({
@@ -1578,6 +1584,8 @@ export default function ChatPage({
 												threadId={threadId} 
 												isStreaming={isStreaming} 
 												isFinalMessage={false}
+												connectedAppsState={connectedAppsState}
+												artifactDataMap={artifactDataMap}
 											/>
 										))}
 									</div>
@@ -1594,6 +1602,8 @@ export default function ChatPage({
 											threadId={threadId} 
 											isStreaming={isStreaming} 
 											isFinalMessage={true}
+											connectedAppsState={connectedAppsState}
+											artifactDataMap={artifactDataMap}
 										/>
 								)}
 							</div>
@@ -2308,16 +2318,21 @@ function ArtifactPane({ artifacts }) {
 	  artifactPane.classList.toggle('open', isOpen);
 	}, [isOpen]);
   
-	// Expose toggle function to window
+	// Handle toggle artifact pane event
 	useEffect(() => {
-	  window.toggleArtifactPane = () => setIsOpen(prev => {
-		const newIsOpen = !prev;
-		document.cookie = `artifactPaneOpen=${newIsOpen}; path=/; max-age=31536000`;
-		return newIsOpen;
-	  });
+	  const handleToggleArtifactPane = () => {
+		setIsOpen(prev => {
+		  const newIsOpen = !prev;
+		  document.cookie = `artifactPaneOpen=${newIsOpen}; path=/; max-age=31536000`;
+		  return newIsOpen;
+		});
+	  };
+  
+	  // Listen for custom toggle event instead of exposing global function
+	  window.addEventListener('toggleArtifactPane', handleToggleArtifactPane);
   
 	  return () => {
-		delete window.toggleArtifactPane;
+		window.removeEventListener('toggleArtifactPane', handleToggleArtifactPane);
 	  };
 	}, []);
   

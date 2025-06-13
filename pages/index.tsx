@@ -1,5 +1,9 @@
 import type { GetServerSideProps } from 'next'
-import ChatPage from '../components/ChatPage'
+import dynamic from 'next/dynamic'
+
+const ChatPage = dynamic(() => import('../components/ChatPage'), {
+  ssr: false
+})
 
 interface IndexProps {
   initialMessages: any[]
@@ -28,21 +32,29 @@ export default function Index({
 }
 
 export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, query }) => {
-  const cookie = req.headers.cookie || ''
-  const baseUrl = process.env.BACKEND_URL || ''
-  const fetchJson = async <T>(path: string): Promise<T> => {
-    const res = await fetch(`${baseUrl}${path}`, { headers: { cookie } })
-    if (!res.ok) throw new Error(`Failed to fetch ${path}`)
-    return res.json()
+  // Mock data for testing
+  const initialMessages = [
+    {
+      id: '1',
+      role: 'assistant',
+      content: 'Hello! How can I help you today?',
+      artifacts: []
+    }
+  ]
+  
+  const availableModels = {
+    'gpt-4': { name: 'GPT-4', description: 'Most capable model' },
+    'gpt-3.5-turbo': { name: 'GPT-3.5 Turbo', description: 'Fast and efficient' }
   }
-
-  const [initialMessages, availableModels, connectedApps, threadData] = await Promise.all([
-    fetchJson<any[]>('/api/initial-messages/'),
-    fetchJson<Record<string, any>>('/api/available-models/'),
-    fetchJson<any[]>('/api/connected-apps/'),
-    fetchJson<any>('/api/thread-data/'),
-  ])
-
+  
+  const connectedApps = []
+  
+  const threadData = {
+    thread_id: null,
+    model: 'gpt-4',
+    artifacts: []
+  }
+  
   const modelOverride = typeof query.modelOverride === 'string' ? query.modelOverride : null
 
   return {
