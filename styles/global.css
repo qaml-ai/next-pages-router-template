@@ -19,12 +19,11 @@
 
     /* Light mode color variables (default) */
     
-    /* backgrounds */
+    /* backgrounds and outlines */
     --clr-var-primary-background: #F1F3F7;
     --clr-var-light-background: #F9FCFF;
     --clr-var-light-background-20: #ffffff31;
     --clr-var-dark-background: #DAE1ED;
-    --clr-var-dark-background-40: #DAE1ED;
     --clr-var-dark-background-20: #ced5e122;
     --clr-var-code-block-background: #ffffff;
     --clr-var-math-block-background: #ffffff;
@@ -38,15 +37,15 @@
     --clr-var-code-font: #262734;
     --clr-var-link: #0066ff;
 
-    /* warnings and alerts */
+    /* error and warning messages */
     --clr-var-error-message-text: #cf4a4a;
     --clr-var-error-message-background: #f66e6e20;
     --clr-var-warning-message-text: #7f4b07;
     --clr-var-warning-message-background: #edaf5e42;
     
     /* misc */
+    --clr-var-button-outline: #CED5E1;
     --clr-var-text-input-outline: #bebebe;
-    --clr-var-prompt-button-outline: #CED5E1;
     --clr-var-button-hover: #0000000e;
     --clr-var-scroll-bar: #00000081;
     --clr-var-loading-lines: #00000081;
@@ -65,12 +64,11 @@
     :root {
         /* Dark mode color variables */
 
-        /* backgrounds */
+        /* backgrounds and outlines */
         --clr-var-primary-background: #13181F;
         --clr-var-light-background: #20252C;
         --clr-var-light-background-20: #20252ca1;
         --clr-var-dark-background: #0C0F12;
-        --clr-var-dark-background-40: #0c0f126b;
         --clr-var-dark-background-20: #0c0f1227;
         --clr-var-code-block-background: #000000;
         --clr-var-math-block-background: #20252ca1;
@@ -84,7 +82,7 @@
         --clr-var-code-font: #daddf3;
         --clr-var-link: #4F94FF;
 
-        /* warnings and alerts */
+        /* error and warning messages */
         --clr-var-error-message-text: #ff3224;
         --clr-var-error-message-background: #fe11001e;
         --clr-var-warning-message-text: #EDAF5E;
@@ -92,8 +90,7 @@
 
         /* misc */
         --clr-var-text-input-outline: #30353B;
-        --clr-var-prompt-button-outline: #30353B;
-        --clr-var-hr: #ffffff0e;
+        --clr-var-button-outline: #30353B;
         --clr-var-button-hover: #ffffff0e;
         --clr-var-scroll-bar: #ffffff73;
         --clr-var-loading-lines: #ffffff73;
@@ -851,7 +848,7 @@ span.new-chat-label {
 .chat-recommendation-button {
     padding: 5px;
     color: var(--clr-var-text-primary);
-    border: 2px solid var(--clr-var-prompt-button-outline);
+    border: 2px solid var(--clr-var-button-outline);
     border-radius: 10px;
     text-align: left;
     font-size: var(--fs-code);
@@ -1021,7 +1018,7 @@ span.new-chat-label {
     top: 30px;
     bottom: 0;
     width: 1px;
-    background-color: var(--clr-var-prompt-button-outline);
+    background-color: var(--clr-var-button-outline);
 }
 .tool-messages-container {
     display: flex;
@@ -1115,7 +1112,7 @@ img.tool-call-logo {
 }
 img.tool-call-logo.rounded {
     height: 1rem;
-    border: 1px solid var(--clr-var-prompt-button-outline);
+    border: 1px solid var(--clr-var-button-outline);
     border-radius: 50%;
     opacity: 1;
 }
@@ -1254,7 +1251,7 @@ img.tool-call-logo.rounded {
     margin-top: 10px;
     border-radius: 5px;
     background-color: var(--clr-var-light-background);
-    border: 1px solid var(--clr-var-prompt-button-outline);
+    border: 1px solid var(--clr-var-button-outline);
     width: fit-content;
 }
 .artifact-button span {
@@ -1275,7 +1272,7 @@ img.tool-call-logo.rounded {
     margin: 5px 0;
     border-radius: 5px;
     background-color: var(--clr-var-light-background);
-    border: 1px solid var(--clr-var-prompt-button-outline);
+    border: 1px solid var(--clr-var-button-outline);
     width: -webkit-fill-available;
 }
 .artifact-button-final-message span {
@@ -1323,7 +1320,7 @@ span.artifact-button-final-message-description {
     display: none;
 
     height: calc(100% - 2rem);
-    border-top: 1px solid var(--clr-var-prompt-button-outline);
+    border-top: 1px solid var(--clr-var-button-outline);
     border-left: none;
     /* border-radius: 10px; */
     background: var(--clr-var-primary-background);
@@ -1366,7 +1363,7 @@ span.artifact-button-final-message-description {
 .artifact-pane-header .left img {
     height: 1.2rem;
     margin: 2px 0px 0px 0px;
-    border: 1px solid var(--clr-var-prompt-button-outline);
+    border: 1px solid var(--clr-var-button-outline);
     border-radius: 50%;
 }
 .artifact-pane-header .right {
@@ -1437,7 +1434,7 @@ h1.artifact-title {
 }
 .artifact-description {
     padding: 10px 10px 0px 10px;
-    border-bottom: 1px solid var(--clr-var-prompt-button-outline);
+    border-bottom: 1px solid var(--clr-var-button-outline);
     flex-shrink: 0;
     display: flex;
     flex-direction: row;
@@ -1494,7 +1491,7 @@ h1.artifact-title {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border: 1px solid var(--clr-var-prompt-button-outline);
+    border: 1px solid var(--clr-var-button-outline);
     border-radius: 11px;
     position: relative;
     overflow: hidden;
@@ -1527,7 +1524,7 @@ h1.artifact-title {
     left: -1px;
     height: calc(100% - 1px);
     width: 65px;
-    border: 2px solid var(--clr-var-prompt-button-outline);
+    border: 2px solid var(--clr-var-button-outline);
     border-radius: 5px;
     background-color: var(--clr-var-primary-background);
     border-radius: 10px;
@@ -1665,7 +1662,7 @@ span.dropdown-header {
 .dropdown-menu hr {
     margin: 0px 10px;
     border: none;
-    border-top: 2px solid var(--clr-var-prompt-button-outline);
+    border-top: 2px solid var(--clr-var-button-outline);
 }
 .dropdown-menu-form {
     display: flex;
@@ -2020,7 +2017,7 @@ p.katex-block {
     .artifact-pane {
         margin: 0px 0px 0px 10px;
         border-top: none;
-        border-left: 1px solid var(--clr-var-prompt-button-outline);
+        border-left: 1px solid var(--clr-var-button-outline);
     }
     .mobile-hidden {
         display: block;
