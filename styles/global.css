@@ -39,10 +39,10 @@
     --clr-var-link: #0066ff;
 
     /* warnings and alerts */
-    --clr-var-red-alert: #cf4a4a;
-    --clr-var-red-sheer: #f66e6e20;
-    --clr-var-yellow-warning: #7f4b07;
-    --clr-var-yellow-sheer: #edaf5e42;
+    --clr-var-error-message-text: #cf4a4a;
+    --clr-var-error-message-background: #f66e6e20;
+    --clr-var-warning-message-text: #7f4b07;
+    --clr-var-warning-message-background: #edaf5e42;
     
     /* misc */
     --clr-var-text-input-outline: #bebebe;
@@ -85,10 +85,10 @@
         --clr-var-link: #4F94FF;
 
         /* warnings and alerts */
-        --clr-var-red-alert: #ff3224;
-        --clr-var-red-sheer: #fe11001e;
-        --clr-var-yellow-warning: #EDAF5E;
-        --clr-var-yellow-sheer: #edaf5e26;
+        --clr-var-error-message-text: #ff3224;
+        --clr-var-error-message-background: #fe11001e;
+        --clr-var-warning-message-text: #EDAF5E;
+        --clr-var-warning-message-background: #edaf5e26;
 
         /* misc */
         --clr-var-text-input-outline: #30353B;
@@ -315,7 +315,7 @@ button {
 }
 /* --- Warning message --- */
 .warning-message {
-    background-color: var(--clr-var-yellow-sheer);
+    background-color: var(--clr-var-warning-message-background);
     padding: 10px;
     border-radius: 8px;
     display: flex;
@@ -325,7 +325,7 @@ button {
 }
 .warning-message p,
 .warning-message span {
-    color: var(--clr-var-yellow-warning);
+    color: var(--clr-var-warning-message-text);
     font-size: var(--fs-code);
     font-weight: var(--fw-semi);
     margin: 0px;
@@ -336,7 +336,7 @@ button {
     font-size: var(--fs-mini);
 }
 .warning-message li {
-    color: var(--clr-var-yellow-warning);
+    color: var(--clr-var-warning-message-text);
     font-size: var(--fs-code);
     font-weight: var(--fw-semi);
     /* margin: 0px; */
@@ -349,7 +349,7 @@ button {
 }
 /* --- Error message --- */
 .error-message {
-    background-color: var(--clr-var-red-sheer);
+    background-color: var(--clr-var-error-message-background);
     padding: 10px;
     border-radius: 8px;
     display: flex;
@@ -360,7 +360,7 @@ button {
 .error-message p,
 .error-message li,
 .error-message span {
-    color: var(--clr-var-red-alert);
+    color: var(--clr-var-error-message-text);
     font-size: var(--fs-code);
     font-weight: var(--fw-semi);
     margin: 0px;
