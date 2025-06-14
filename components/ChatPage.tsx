@@ -943,7 +943,7 @@ export default function ChatPage({ connectedApps, availableModels, initialMessag
 	const [retryMessage, setRetryMessage] = useState(null);
 	const [historyIndex, setHistoryIndex] = useState(-1);
 	const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
-	const [selectedDataSourcesIDs, setSelectedDataSourcesIDs] = useState();
+	const [selectedDataSourcesIDs, setSelectedDataSourcesIDs] = useState([]);
 
     useEffect(() => {
 		const thread = threadData ? threadData : { connection_ids: [] };
@@ -958,7 +958,7 @@ export default function ChatPage({ connectedApps, availableModels, initialMessag
     }, []);
 
     useEffect(() => {
-        if (selectedDataSourcesIDs !== undefined) localStorage.setItem(`dataSources_null`, JSON.stringify(selectedDataSourcesIDs));
+        if (selectedDataSourcesIDs.length > 0) localStorage.setItem(`dataSources_null`, JSON.stringify(selectedDataSourcesIDs));
     }, [selectedDataSourcesIDs]);
 
 	const selectedDataSources = connectedApps.filter(app => selectedDataSourcesIDs.includes(app.id));
@@ -1374,7 +1374,7 @@ export default function ChatPage({ connectedApps, availableModels, initialMessag
 	
 	// Update useEffect to clear recommendations when streaming starts
 	useEffect(() => {
-		if (!selectedDataSourcesIDs || selectedDataSourcesIDs.length === 0) {
+		if (selectedDataSourcesIDs.length === 0) {
 			setRecommendations([]);
 			return;
 		}
