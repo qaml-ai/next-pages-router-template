@@ -1,3 +1,4 @@
+import '../styles/global.css'
 import type { AppProps } from 'next/app'
 
 // Global app component to initialize pages router app

@@ -1,24 +1,43 @@
-'use client'
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-
-export interface ChatPageProps {
-  initialMessages: any[]
-  availableModels: Record<string, any>
-  connectedApps: any[]
-  threadData: any
-  modelOverride: string | null
-  artifactData?: any[]
-}
-
-// Component will be defined later in the file
-
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { createPortal } from 'react-dom';
 import markdownit from 'markdown-it';
 import mk from '@vscode/markdown-it-katex';
 import hljs from 'highlight.js';
-
-// Copy code functionality will be handled via React state and refs
+// Import Heroicons
+// Outline icons
+import {
+  XMarkIcon,
+  BookOpenIcon,
+  PlusCircleIcon,
+  HandThumbUpIcon,
+  HandThumbDownIcon,
+  ArrowTopRightOnSquareIcon,
+  ArrowPathIcon,
+  ArrowDownTrayIcon,
+  Square2StackIcon,
+  LightBulbIcon,
+  TableCellsIcon,
+  MagnifyingGlassIcon,
+  ChartBarIcon,
+  CheckIcon,
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
+  ChevronUpIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+  CodeBracketIcon,
+  PlusIcon,
+} from '@heroicons/react/24/outline';
+// Filled (solid) icons
+import {
+  HandThumbUpIcon as HandThumbUpIconSolid,
+  HandThumbDownIcon as HandThumbDownIconSolid,
+  StopCircleIcon as StopCircleIconSolid,
+  ArrowUpCircleIcon as ArrowUpCircleIconSolid,
+  Square2StackIcon as Square2StackIconSolid,
+  ChartBarIcon as ChartBarIconSolid,
+} from '@heroicons/react/24/solid';
 
 const md = new markdownit({
     highlight: function (str, lang) {
@@ -38,8 +57,10 @@ md.renderer.rules.fence = (tokens, idx, options, env, self) => {
             <span class="code-block-language">${langName || 'plaintext'}</span>
 			<div class="code-block-buttons">
 				<span class="copy-message" style="visibility: hidden;">Copied</span>
-				<button class="icon-button code-block-button" onclick="window.handleCopyCode(this.closest('.code-block'))" data-tooltip="Copy code block">
-					<img src="/static/images/copy-icon.png" alt="Copy"/>
+				<button class="icon-button code-block-button" onclick="copyCode(this.closest('.code-block'))" data-tooltip="Copy code block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="heroicon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-label="Copy">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
+                    </svg>
 				</button>
 			</div>
         </div>
@@ -49,7 +70,7 @@ md.renderer.rules.fence = (tokens, idx, options, env, self) => {
 
 md.use(mk, { throwOnError: false, output: 'mathml' });
 
-function renderMarkdown(content: string, artifactDataMap: Record<string, any> = {}) {
+function renderMarkdown(content, artifactDataMap = {}) {
 	if (!content) return null;
     let renderedHtml = md.render(
         content
@@ -82,6 +103,15 @@ function renderMarkdown(content: string, artifactDataMap: Record<string, any> = 
         const is_chart = Boolean(artifact.is_chart);
         const description = artifact.description || '';
 
+        // Build icon SVG based on artifact type
+        const iconSvg = is_chart ? `
+            <svg xmlns="http://www.w3.org/2000/svg" class="heroicon heroicon-xxl color-mode-40" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-label="Chart icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+            </svg>` : `
+            <svg xmlns="http://www.w3.org/2000/svg" class="heroicon heroicon-xxl color-mode-40" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-label="Table icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+            </svg>`;
+
         // HTML for the artifact button
         const btnHtml = `
             <button class="artifact-button-final-message" onclick="window.dispatchEvent(new CustomEvent('showArtifact', { detail: { artifactId: ${artifactId} } }))">
@@ -89,7 +119,7 @@ function renderMarkdown(content: string, artifactDataMap: Record<string, any> = 
                     <span class="artifact-button-final-message-title">${title}</span>
                     <span class="artifact-button-final-message-description">${description}</span>
                 </div>
-                <img class="color-flip-60" src="/static/images/${is_chart ? 'report-thin-icon' : 'table-thin-icon'}.png" alt="Go to artifact"/>
+                ${iconSvg}
             </button>
         `;
 
@@ -103,6 +133,7 @@ function renderMarkdown(content: string, artifactDataMap: Record<string, any> = 
         if (next && next.nodeType === Node.ELEMENT_NODE && next.tagName.toLowerCase() === 'br') next.remove();
 
         // Auto-open behaviour
+        if (!window.autoOpenedArtifacts) window.autoOpenedArtifacts = [];
         if (!window.autoOpenedArtifacts.includes(artifactId)) {
             window.autoOpenedArtifacts.push(artifactId);
             setTimeout(() => window.dispatchEvent(new CustomEvent('showArtifact', { detail: { artifactId } })), 0);
@@ -119,7 +150,7 @@ function renderMarkdown(content: string, artifactDataMap: Record<string, any> = 
     };
 }
 
-const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, artifactDataMap, handleCopyCode }) => {
+const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => {
     if (tool_calls.length === 0) return null;
 
     const renderToolCall = useCallback((tool_call) => {
@@ -146,7 +177,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
 		input.code = input.code || '';
 		input.chart_code = input.chart_code || '';
         
-        let selectedConnection = connectedAppsState.find(app => app.id === input.connection_id);
+        let selectedConnection = connectedApps.find(app => app.id === input.connection_id);
         if (!selectedConnection) selectedConnection = {
             name: 'camel',
             account_name: 'camel',
@@ -162,10 +193,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/table-icon.png`} 
-                                                alt="Table" 
-                                                className="tool-call-logo color-flip-80"
+                                            <TableCellsIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Table"
                                             />
                                         </div>
                                         Querying {selectedConnection.account_name}
@@ -194,10 +224,10 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
+                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
-                                                            <img src="/static/images/copy-icon.png" alt="Copy"/>
+                                                        <Square2StackIcon className="heroicon " aria-label="Copy" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -213,10 +243,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/code-icon.png`} 
-                                                alt="Code" 
-                                                className="tool-call-logo color-flip-80"
+                                            <CodeBracketIcon
+                                                className="tool-call-logo heroicon"
+                                                aria-label="Code"
                                             />
                                         </div>
                                         Running Python code
@@ -233,10 +262,10 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
+                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
-                                                            <img src="/static/images/copy-icon.png" alt="Copy"/>
+                                                        <Square2StackIcon className="heroicon " aria-label="Copy" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -252,10 +281,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/chart-icon.png`} 
-                                                alt="Chart" 
-                                                className="tool-call-logo color-flip-80"
+                                            <ChartBarIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Chart"
                                             />
                                         </div>
                                         Visualizing {input.title}
@@ -284,10 +312,10 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                         <button 
                                                             className="icon-button code-block-button" 
-                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
+                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
                                                             data-tooltip="Copy code block"
                                                         >
-                                                            <img src="/static/images/copy-icon.png" alt="Copy"/>
+                                                        <Square2StackIcon className="heroicon " aria-label="Copy" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -303,17 +331,16 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/light-bulb-icon.png`} 
-                                                alt="Thinking" 
-                                                className="tool-call-logo color-flip-80"
+                                            <LightBulbIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Thinking"
                                             />
                                         </div>
                                         Planning
                                     </div>
                                     <div className="tool-call-body-content">
                                         <div className="tool-call-planning"
-                                             dangerouslySetInnerHTML={renderMarkdown(input.thought, artifactDataMap)} />
+                                             dangerouslySetInnerHTML={renderMarkdown(input.thought)} />
                                     </div>
                                 </>
                             );
@@ -323,10 +350,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/search-icon.png`} 
-                                                alt="Search" 
-                                                className="tool-call-logo color-flip-80"
+                                            <MagnifyingGlassIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Search"
                                             />
                                         </div>
                                         Searching camelAI's memory
@@ -346,10 +372,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/table-icon.png`} 
-                                                alt="Table" 
-                                                className="tool-call-logo color-flip-80"
+                                            <TableCellsIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Table"
                                             />
                                         </div>
                                         Querying {input.queries.length} data sources
@@ -362,8 +387,8 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-data-sources">
                                                 {input.queries.map((query, index) => {
-                                                    // Find the connection details from connectedAppsState
-                                                    const connectionDetails = connectedAppsState.find(app => app.id === query.connection_id) || {};
+                                                    // Find the connection details from connectedApps
+                                                    const connectionDetails = connectedApps.find(app => app.id === query.connection_id) || {};
                                                     const connectionName = connectionDetails.name || 'unknown';
                                                     const accountName = connectionDetails.account_name || query.name;
                                                     
@@ -387,12 +412,12 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                                     <span className="code-block-language">SQL</span>
                                                     <div className="code-block-buttons">
                                                         <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
-                                                        <button 
-                                                            className="icon-button code-block-button" 
-                                                            onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
+                                                        <button
+                                                            className="icon-button code-block-button"
+                                                            onClick={(e) => window.copyCode(e.target.closest('.code-block'))}
                                                             data-tooltip="Copy code block"
                                                         >
-                                                            <img src="/static/images/copy-icon.png" alt="Copy"/>
+                                                            <Square2StackIcon className="heroicon " aria-label="Copy" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -422,10 +447,9 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                 <>
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
-                                            <img 
-                                                src={`/static/images/chart-icon.png`} 
-                                                alt="Chart" 
-                                                className="tool-call-logo color-flip-80"
+                                            <ChartBarIcon
+                                                className="tool-call-logo heroicon "
+                                                aria-label="Chart"
                                             />
                                         </div>
                                         Visualizing {input.title}
@@ -438,8 +462,8 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-data-sources">
                                                 {input.queries && input.queries.map((query, index) => {
-                                                    // Find the connection details from connectedAppsState
-                                                    const connectionDetails = connectedAppsState.find(app => app.id === query.connection_id) || {};
+                                                    // Find the connection details from connectedApps
+                                                    const connectionDetails = connectedApps.find(app => app.id === query.connection_id) || {};
                                                     const connectionName = connectionDetails.name || 'unknown';
                                                     const accountName = connectionDetails.account_name || query.name;
                                                     
@@ -466,10 +490,10 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedAppsState, 
                                                             <span className="copy-message" style={{ visibility: 'hidden' }}>Copied</span>
                                                             <button 
                                                                 className="icon-button code-block-button" 
-                                                                onClick={(e) => handleCopyCode(e.currentTarget.closest('.code-block'))} 
+                                                                onClick={(e) => window.copyCode(e.target.closest('.code-block'))} 
                                                                 data-tooltip="Copy code block"
                                                             >
-                                                                <img src="/static/images/copy-icon.png" alt="Copy"/>
+                                                                <Square2StackIcon className="heroicon " aria-label="Copy" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -531,7 +555,7 @@ const TextMessagePart = React.memo(({ content, role, artifactDataMap }) => {
 	}
 });
 
-const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, threadId, isStreaming, isFinalMessage, connectedAppsState, artifactDataMap, handleCopyCode }) => {
+const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, threadId, isStreaming, isFinalMessage, connectedApps, artifactDataMap }) => {
     let { content, role, artifacts } = message;
 	if (role === 'hidden' || role === 'developer') return null;
 	let tool_calls = [];
@@ -542,12 +566,17 @@ const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, th
 		content = contentArray.filter(part => part.type === 'text').map(part => part.text)[0] || '';
 	}
 	artifacts = artifacts || [];
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+    if (!isMounted) return null;
 
     if (role === "user") {
         return (
             <div className="user-message-container">
                 {/* User messages only have text content */}
-                {content && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
+                {content && <TextMessagePart key={message.id} content={content} role={role} />}
             </div>
         );
     } else if (isFinalMessage) {
@@ -555,36 +584,19 @@ const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, th
             <>
                 {/* Renders the text of the message. Role is user or assistant and impacts styling */}
                 {content && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
-
-                {/* Renders the artifacts of the message. TODO: Update the styling of the artifacts in the final message */}
-                {/* {artifacts.length > 0 && (
-                    <div className="chat-message-artifacts">
-                        {artifacts.map(artifact => (
-                            <button 
-                                className="artifact-button"
-                                key={artifact.id} 
-                                onClick={() => {
-                                    const event = new CustomEvent('showArtifact', { detail: { artifactId: artifact.id } });
-                                    window.dispatchEvent(event);
-                                }}
-                            >
-                                <img className="color-flip-100" src={`/static/images/artifact-icon.png`} alt="Go" />
-                                <span>{artifact.title}</span>
-                            </button>
-                        ))}
-                    </div>
-                )} */}
             </>
         );
     } else {
         return (
             <div className="tool-call-container">
-                {/* Renders the text of the message. Role is user or assistant and impacts styling */}
+                {/* Renders the analysis text of the message. */}
                 {/* NOTE: For backwards compatibility we don't show text message parts if there are tool calls present */}
-                {content && !tool_calls.length && <TextMessagePart key={message.id} content={content} role={role} artifactDataMap={artifactDataMap} />}
+                {/* FIXME: @miguel, can we just remove the content line below or is it still needed for backwards compatibility with pre 3.0 chats? */}
+                {content && !tool_calls.length && <TextMessagePart key={message.id} content={content} role={role} />}
+
                 {/* Renders the tool calls of the message. */}
-                <ToolCalls tool_calls={tool_calls} scrollToBottom={scrollToBottom} connectedAppsState={connectedAppsState} artifactDataMap={artifactDataMap} handleCopyCode={handleCopyCode} />
-                {/* Renders the artifacts of the message. */}
+                <ToolCalls tool_calls={tool_calls} scrollToBottom={scrollToBottom} connectedApps={connectedApps} />
+                {/* Renders the mini artifacts done in the analysis. */}
                 {artifacts.length > 0 && (
                     <>
                         {artifacts.map(artifact => (
@@ -596,7 +608,7 @@ const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, th
                                     window.dispatchEvent(event);
                                 }}
                             >
-                                <img className="color-flip-100" src={`/static/images/artifact-icon.png`} alt="Go" />
+                                <ArrowTopRightOnSquareIcon className="heroicon color-mode-100" aria-label="Go to artifact" />
                                 <span>{artifact.title}</span>
                             </button>
                         ))}
@@ -689,6 +701,11 @@ const ChatMessageBottomBar = ({
 
     const submitThumbsUp = async (threadId) => {
         try {
+            const csrfToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                .split('=')[1];
+                
             // Safely get user message content even if prevMessage is null
             const userMessageContent = prevMessage ? (
                 typeof prevMessage.content === 'string'
@@ -713,6 +730,7 @@ const ChatMessageBottomBar = ({
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
                 },
                 body: JSON.stringify({
                     user_message: userMessageContent,
@@ -759,6 +777,8 @@ const ChatMessageBottomBar = ({
 
     const submitDetails = async (reason, details, threadId) => {
         try {
+            const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+            
             // Safely get user message content even if prevMessage is null
             const userMessageContent = prevMessage ? (
                 typeof prevMessage.content === 'string'
@@ -783,6 +803,7 @@ const ChatMessageBottomBar = ({
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
                 },
                 body: JSON.stringify({
                     reason: reason,
@@ -810,14 +831,26 @@ const ChatMessageBottomBar = ({
             <div className={`chat-message-bottom-bar ${isStreaming ? 'streaming' : ''} ${isLatestMessage ? 'latest' : ''}`}>
                 {role === "assistant" && (
                     <>
-                        <button className="icon-button small" onClick={handleCopy} data-tooltip="Copy message">
-                            <img src={isCopied ? "/static/images/copied-icon.png" : "/static/images/copy-icon.png"} alt={isCopied ? "copied" : "copy"}/>
+                        <button className="icon-button" onClick={handleCopy} data-tooltip="Copy message">
+                            {isCopied ? (
+                                <Square2StackIconSolid className="heroicon" aria-label="Copied" />
+                            ) : (
+                                <Square2StackIcon className="heroicon" aria-label="Copy" />
+                            )}
                         </button>
-                        <button className="icon-button small" onClick={handleThumbsUp} data-tooltip={feedbackState.thumbsUpSubmitted ? "Feedback submitted" : "Good response"}>
-                            <img src={feedbackState.thumbsUpSubmitted ? "/static/images/thumb-up-filled-icon.png" : "/static/images/thumb-up-icon.png"} alt="Good response" />
+                        <button className="icon-button" onClick={handleThumbsUp} data-tooltip={feedbackState.thumbsUpSubmitted ? "Feedback submitted" : "Good response"}>
+                            {feedbackState.thumbsUpSubmitted ? (
+                                <HandThumbUpIconSolid className="heroicon" aria-label="Good response" />
+                            ) : (
+                                <HandThumbUpIcon className="heroicon" aria-label="Good response" />
+                            )}
                         </button>
-                        <button className="icon-button small" onClick={handleThumbsDown} data-tooltip={feedbackState.thumbsDownSubmitted ? "Feedback submitted" : "Bad response"}>
-                            <img src={feedbackState.thumbsDownSubmitted ? "/static/images/thumb-down-filled-icon.png" : "/static/images/thumb-down-icon.png"} alt="bad response"/>
+                        <button className="icon-button" onClick={handleThumbsDown} data-tooltip={feedbackState.thumbsDownSubmitted ? "Feedback submitted" : "Bad response"}>
+                            {feedbackState.thumbsDownSubmitted ? (
+                                <HandThumbDownIconSolid className="heroicon" aria-label="Bad response" />
+                            ) : (
+                                <HandThumbDownIcon className="heroicon" aria-label="Bad response" />
+                            )}
                         </button>
                     </>
                 )}
@@ -880,29 +913,23 @@ const ThumbsDownFeedback = ({ onSubmit, onOtherClick, showOtherInput, otherDetai
     </div>
 );
 
-export default function ChatPage({
-	initialMessages,
-	availableModels,
-	connectedApps,
-	threadData,
-	modelOverride,
-}: ChatPageProps) {
+export default function ChatPage({ connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
 	const [messages, setMessages] = useState(initialMessages);
 	const prevMessages = useRef([]);
 	const [inputMessage, setInputMessage] = useState('');
 	const [isStreaming, setIsStreaming] = useState(false);
 	const isStreamingRef = useRef(isStreaming);
 	const chatContainerRef = useRef(null);
-	const [threadId, setThreadId] = useState(threadData?.thread_id || null);
+	const [threadId, setThreadId] = useState(threadData ? threadData.id : null);
 	const [model, setModel] = useState(() => {
 		if (modelOverride && availableModels[modelOverride]) {
 			return modelOverride;
 		}
 		// Check thread data or localStorage
-		const thread = threadData;
+		const thread = threadData ? threadData : { model: null };
 		
 		// Prioritize thread model, then localStorage, then default
-        if (thread?.model) {
+        if (thread.model) {
             return thread.model;
         } else if (localStorage.getItem('lastSelectedModel') && availableModels[localStorage.getItem('lastSelectedModel')]) {
             return localStorage.getItem('lastSelectedModel');
@@ -916,59 +943,41 @@ export default function ChatPage({
 	const [retryMessage, setRetryMessage] = useState(null);
 	const [historyIndex, setHistoryIndex] = useState(-1);
 	const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
-	const [connectedAppsState] = useState(connectedApps);
-	const [selectedDataSourcesIDs, setSelectedDataSourcesIDs] = useState([]);
-	const selectedDataSources = connectedAppsState.filter(app => selectedDataSourcesIDs.includes(app.id));
+	const [selectedDataSourcesIDs, setSelectedDataSourcesIDs] = useState();
+
+    useEffect(() => {
+		const thread = threadData ? threadData : { connection_ids: [] };
+		if (thread.connection_ids?.length > 0) {
+            setSelectedDataSourcesIDs(thread.connection_ids);
+		} else if (selectedDataSource) {
+            setSelectedDataSourcesIDs([selectedDataSource]);
+        } else {
+            const saved = localStorage.getItem(`dataSources_null`);
+            setSelectedDataSourcesIDs(saved ? JSON.parse(saved) : connectedApps[0]?.id ? [connectedApps[0].id] : []);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (selectedDataSourcesIDs !== undefined) localStorage.setItem(`dataSources_null`, JSON.stringify(selectedDataSourcesIDs));
+    }, [selectedDataSourcesIDs]);
+
+	const selectedDataSources = connectedApps.filter(app => selectedDataSourcesIDs.includes(app.id));
 	const isThreadLocked = !!threadId;
 	// New state to track expanded/collapsed state for tool message groups
 	const [expandedGroups, setExpandedGroups] = useState({});
 	// Add state for model switcher dropdown
         const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
         const modelMenuRef = useRef(null);
-        const [autographMode, setAutographMode] = useState(() => {
-                const stored = localStorage.getItem('autographMode');
-                return stored ? JSON.parse(stored) : true;
-        });
+        const [autographMode, setAutographMode] = useState();
 
         useEffect(() => {
-                localStorage.setItem('autographMode', JSON.stringify(autographMode));
+            const stored = localStorage.getItem('autographMode');
+            setAutographMode(stored ? stored === 'true' : true);
+        }, []);
+
+        useEffect(() => {
+            if (autographMode !== undefined) localStorage.setItem('autographMode', JSON.stringify(autographMode));
         }, [autographMode]);
-
-	// Build artifact data map from props
-	const [artifactDataMap, setArtifactDataMap] = useState<Record<string, any>>(() => {
-		const allArtifacts = threadData?.artifacts || initialMessages.flatMap(msg => msg.artifacts || []);
-		return allArtifacts.reduce((map, artifact) => {
-			map[artifact.id] = artifact;
-			return map;
-		}, {} as Record<string, any>);
-	});
-
-	// Handle code copying
-	const handleCopyCode = useCallback((codeBlock: HTMLElement) => {
-		if (!codeBlock) return;
-		
-		const copyMessage = codeBlock.querySelector('.copy-message') as HTMLElement;
-		const code = codeBlock.querySelector('code')?.innerText || '';
-		
-		navigator.clipboard.writeText(code).then(() => {
-			if (copyMessage) {
-				copyMessage.style.visibility = 'visible';
-				setTimeout(() => {
-					copyMessage.style.visibility = 'hidden';
-				}, 2000);
-			}
-		}).catch(err => {
-			console.error('Failed to copy:', err);
-		});
-	}, []);
-
-	// Make handleCopyCode available globally for markdown renderer
-	useEffect(() => {
-		(window as any).handleCopyCode = handleCopyCode;
-		return () => {
-			delete (window as any).handleCopyCode;
-		};
-	}, [handleCopyCode]);
 
 	// Effect to update lastSelectedModel in localstorage when model changes
 	useEffect(() => {
@@ -1066,55 +1075,26 @@ export default function ChatPage({
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
 	const artifacts = useMemo(() => messages.flatMap(msg => msg.artifacts).filter(Boolean).reverse(), [messages]);
 
-	// Update the artifactDataMap when new artifacts arrive in messages
-	useEffect(() => {
-		const map = messages
-			.flatMap(msg => msg.artifacts || [])
-			.reduce((acc, art) => { acc[art.id] = art; return acc; }, {});
-		setArtifactDataMap(map);
-	}, [messages]);
+    useEffect(() => {
+        window.copyCode = (codeBlock) => {
+            const copyMessage = codeBlock.querySelector('.copy-message');
+            const code = codeBlock.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                copyMessage.style.visibility = 'visible';  // Show "Copied" message
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000); // Hide after 2 seconds
+            }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            };
+    }, []);
+
+    const artifactDataMap = useMemo(() => {
+        const artifactData = messages.flatMap(msg => msg.artifacts || []);
+        return artifactData.reduce((map, artifact) => { map[artifact.id] = artifact; return map; }, {});
+    }, [messages]);
 
 	// Inside the App component, add this state variable with the other state declarations
 	const [connectionIDForKnowledgeBase, setConnectionIDForKnowledgeBase] = useState(null);
-
-	// Set the selected data sources from the initial state
-	useEffect(() => {
-		const selected = selectedDataSourcesIDs[0];
-		const thread = threadData;
-		let stored = JSON.parse(localStorage.getItem(`dataSources_${threadId}`));
-		// If stored is not in connectedAppsState, set it to the first connected app
-		if (stored && !stored.some(id => connectedAppsState.some(app => app.id === id))) {
-			stored = [connectedAppsState[0].id];
-		}
-		
-		// If thread has connection_ids, use those
-		if (thread.connection_ids?.length > 0) {
-			setSelectedDataSourcesIDs(thread.connection_ids);
-			return;
-		}
-		
-		// Filter out any null/undefined values from stored array before using it
-		const validStored = stored?.filter(id => id != null) || [];
-		
-		// Set initial data sources, preferring selected over stored over first connected app
-		setSelectedDataSourcesIDs(
-			selected ? [selected] : 
-			validStored.length > 0 ? validStored :
-			connectedAppsState[0]?.id ? [connectedAppsState[0].id] : 
-			[]
-		);
-	}, [connectedAppsState]);
-
-	// Data sources
-	useEffect(() => {
-		// Only store data sources if thread is not locked
-		if (!isThreadLocked) {
-			const validIds = selectedDataSourcesIDs.filter(id => id != null);
-			if (validIds.length > 0) {
-				localStorage.setItem(`dataSources_${threadId}`, JSON.stringify(validIds));
-			}
-		}
-	}, [selectedDataSourcesIDs, threadId, isThreadLocked]);
 
 	// Add the handleInputChange function
 	const handleInputChange = (e) => {
@@ -1159,6 +1139,7 @@ export default function ChatPage({
 		setIsStreaming(true);
         setIsLoading(true);
 
+		const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
                 const payload = {
                         threadId: threadId,
                         model: model,
@@ -1170,6 +1151,7 @@ export default function ChatPage({
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify(payload)
         }).then(response => {
@@ -1314,10 +1296,12 @@ export default function ChatPage({
 		if (!threadId) return;
 		
 		try {
+			const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
 			const response = await fetch(`/api/chat/${threadId}/cancel/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'X-CSRFToken': csrfToken
 				}
 			});
 			
@@ -1364,6 +1348,7 @@ export default function ChatPage({
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'X-CSRFToken': getCsrfToken(),
 				},
 				body: JSON.stringify({
 					dataSources: selectedDataSourcesIDs
@@ -1389,7 +1374,7 @@ export default function ChatPage({
 	
 	// Update useEffect to clear recommendations when streaming starts
 	useEffect(() => {
-		if (selectedDataSourcesIDs === null || selectedDataSourcesIDs.length === 0) {
+		if (!selectedDataSourcesIDs || selectedDataSourcesIDs.length === 0) {
 			setRecommendations([]);
 			return;
 		}
@@ -1495,22 +1480,6 @@ export default function ChatPage({
 		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, []);
 
-	// Effect to handle knowledge base modal visibility
-	useEffect(() => {
-		const modal = document.querySelector('#knowledge-base-modal');
-		if (connectionIDForKnowledgeBase) {
-			modal.showModal();
-		} else {
-			modal.close();
-		}
-	}, [connectionIDForKnowledgeBase]);
-
-	// Handler to close the knowledge base modal
-	const handleCloseKnowledgeBaseModal = () => {
-		setConnectionIDForKnowledgeBase(false);
-	};
-
-
 	// Add a function to toggle the expanded/collapsed state of a tool message group
 	const toggleToolMessages = (groupId) => {
 		setExpandedGroups(prev => ({
@@ -1551,6 +1520,12 @@ export default function ChatPage({
 		}
 	}, [isStreaming, currentToolCall, groupedMessages]);
 
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+    if (!isMounted) return null;
+
 	return (
 		<>
 			{/* if there are no messages, don't show the chat container */}
@@ -1566,10 +1541,9 @@ export default function ChatPage({
 									>
 										<div className="tool-messages-toggle">
 											<span>Analysis</span>
-											<img 
-												src={`/static/images/chevron-up.png`}
-												alt="Toggle"
-												className={`color-flip-80 ${expandedGroups[group.id] === false ? 'chevron-left' : 'chevron-down'}`}
+											<ChevronUpIcon 
+												className={`heroicon ${expandedGroups[group.id] === false ? 'chevron-left' : 'chevron-down'}`}
+												aria-label="Toggle"
 											/>
 										</div>
 									</div>
@@ -1584,8 +1558,8 @@ export default function ChatPage({
 												threadId={threadId} 
 												isStreaming={isStreaming} 
 												isFinalMessage={false}
-												connectedAppsState={connectedAppsState}
-												artifactDataMap={artifactDataMap}
+                                                connectedApps={connectedApps}
+                                                artifactDataMap={artifactDataMap}
 											/>
 										))}
 									</div>
@@ -1602,8 +1576,8 @@ export default function ChatPage({
 											threadId={threadId} 
 											isStreaming={isStreaming} 
 											isFinalMessage={true}
-											connectedAppsState={connectedAppsState}
-											artifactDataMap={artifactDataMap}
+                                            connectedApps={connectedApps}
+                                            artifactDataMap={artifactDataMap}
 										/>
 								)}
 							</div>
@@ -1722,12 +1696,12 @@ export default function ChatPage({
 								<div className="chat-ds-container">
 									<div className="chat-ds-select-container">
 										<button 
-											className={`icon-button ${selectedDataSources.length === 0 ? 'no-sources-selected' : ''} ${isThreadLocked ? ' shift-tt-right-zero disabled' : ''}`}
+											className={`icon-button ${selectedDataSources.length === 0 ? 'no-sources-selected' : ''} ${isThreadLocked ? ' left-align-tooltip disabled' : ''}`}
 											data-tooltip={isThreadLocked ? "Start a chat to change data" : "Add data source"}
 											onClick={() => !isThreadLocked && setIsDataSourceMenuOpen(!isDataSourceMenuOpen)}
 											disabled={isThreadLocked}
 										>
-											<img className="color-flip-80" src="/static/images/square-plus-icon.png" alt="Add"/>
+                                            <PlusCircleIcon className={`heroicon ${isThreadLocked ? 'color-mode-40' : ''}`} aria-label="Add" />
 										</button>
 										{isDataSourceMenuOpen && !isThreadLocked && (
 											<div className={`chat-ds-select-menu ${messages.length > 0 ? 'active-chat' : ''}`} ref={dataSourceMenuRef}>
@@ -1758,7 +1732,7 @@ export default function ChatPage({
 													)}
 													<div className="chat-ds-select-menu-item">
 														<a href="/connections/add-connection" className="button text">
-															<img className="color-flip-100" src="/static/images/plus-white.png" alt="Add"/>
+															<PlusIcon className="heroicon" aria-label="Add"/>
 															<span>Add connection</span>
 														</a>
 													</div>
@@ -1772,7 +1746,7 @@ export default function ChatPage({
 												<img className="chat-ds-tag-icon" src={`/static/images/${dataSource?.icon}`} alt={dataSource?.account_name} />
 												<span>{dataSource?.account_name}</span>
 												<button className="icon-button" data-tooltip="Edit knowledge base" onClick={() => setConnectionIDForKnowledgeBase(dataSource.id)}>
-													<img className="color-flip-80" src="/static/images/book-icon.png" alt="Knowledge base"/>
+													<BookOpenIcon className="heroicon " aria-label="Knowledge base"/>
 												</button>
 												{!isThreadLocked && (
 													<button 
@@ -1780,7 +1754,7 @@ export default function ChatPage({
 														data-tooltip="Remove this data source"
 														onClick={() => setSelectedDataSourcesIDs(selectedDataSourcesIDs.filter(id => id !== dataSource.id))}
 													>
-														<img className="color-flip-80" src="/static/images/x-icon.png" alt="Remove"/>
+														<XMarkIcon className="heroicon " aria-label="Remove" />
 													</button>
 												)}
 											</div>
@@ -1801,11 +1775,7 @@ export default function ChatPage({
                                                 onClick={() => setIsModelMenuOpen(!isModelMenuOpen)}
                                             >
                                                 <span>{availableModels[model].name}</span>
-                                                <img 
-                                                    className="color-flip-80" 
-                                                    src="/static/images/chevron-up.png" 
-                                                    alt="Model switcher" 
-                                                />
+                                                <ChevronUpIcon className="heroicon " aria-label="Model switcher"/>
                                             </div>
                                             {isModelMenuOpen && (
                                                 <div className="model-switcher-menu" ref={modelMenuRef}>
@@ -1833,7 +1803,7 @@ export default function ChatPage({
                                                             <div className="model-switcher-selected-model-container">
                                                                 <span className="model-name">{modelInfo.name}</span>
                                                                 {model === modelKey ? (
-                                                                    <img className="color-flip-80" src="/static/images/checkmark-icon.png" alt="Selected"/>
+                                                                    <CheckIcon className="heroicon " aria-label="Selected" />
                                                                 ) : isThreadLocked && (
                                                                     <span className="new-chat-label">New chat</span>
                                                                 )}
@@ -1846,24 +1816,25 @@ export default function ChatPage({
                                         </div>
                                     )}
                                     <button
-                                        className={`icon-button autograph-toggle ${autographMode ? '' : 'grey-out'}`}
+                                        className="icon-button"
                                         onClick={() => setAutographMode(!autographMode)}
                                         data-tooltip={autographMode ? "Create graphs" : "Do not create graphs"}
                                     >
-                                        <img
-                                            src={`/static/images/${autographMode ? 'chart-filled-icon.png' : 'chart-icon.png'}`}
-                                            alt="Autograph mode"
-                                        />
+                                        {autographMode ? (
+                                            <ChartBarIconSolid className="heroicon" aria-label="Autograph mode" />
+                                        ) : (
+                                            <ChartBarIcon className="heroicon color-mode-40" aria-label="Autograph mode" />
+                                        )}
                                     </button>
                                     <button
                                            className="icon-button"
                                            onClick={isStreaming ? handleStopStreaming : handleSendMessage}
                                            aria-label={isStreaming ? 'Stop' : 'Send'}
 									>
-										{isStreaming ? 
-											<img className="text-input-field-icon" src="/static/images/stop-icon.png" alt="Stop"/> :
-											<img className="text-input-field-icon" src="/static/images/send-icon.png" alt="Send"/>
-										}
+                                        {isStreaming ?
+                                            <StopCircleIconSolid className="heroicon heroicon-xl" aria-label="Stop" /> :
+                                            <ArrowUpCircleIconSolid className="heroicon heroicon-xl" aria-label="Send" />
+                                        }
 									</button>
 								</div>
 							</div>
@@ -1904,361 +1875,12 @@ export default function ChatPage({
 					</div>
 				)}
 			</div>
-			{createPortal(<ArtifactPane artifacts={artifacts} />, document.getElementById('artifact-pane'))}
+			{/* {createPortal(<ArtifactPane artifacts={artifacts} />, document.getElementById('artifact-pane'))} */}
 			
-			{/* Add portal for KnowledgeBaseModal */}
-			{connectionIDForKnowledgeBase && createPortal(
-				<KnowledgeBaseModal 
-					connectionId={connectionIDForKnowledgeBase}
-					onClose={() => setConnectionIDForKnowledgeBase(null)}
-				/>,
-				document.getElementById('knowledge-base-modal')
-			)}
 		</>
 	);
 }
 
-if (document.getElementById('chat-root'))
-  ReactDOM.createRoot(document.getElementById('chat-root')).render(<App />);
-
-function Modal() {
-    const [isConfirmingDeleteAccount, setIsConfirmingDeleteAccount] = useState(false);
-    const [isConfirmingClearHistory, setIsConfirmingClearHistory] = useState(false);
-    const temporary_no_delete = true; // Set this to false to re-enable delete options
-    const [shortcuts_osType, setshortcuts_osType] = useState('Mac');
-    
-    // Check if user is enterprise
-    const isEnterprise = userData.payment_status_name === 'Enterprise';
-
-    // State to track the active section ('Account' or 'Shortcuts')
-    const [activeSection, setActiveSection] = useState('Account');
-
-    const closeModal = () => {
-        document.querySelector('#react-modal').close();
-    };
-
-    const handleBackdropClick = (e) => {
-        if (e.target.tagName === 'DIALOG') {
-            closeModal();
-        }
-    };
-
-    // Function to handle section change
-    const handleSectionChange = (section) => {
-        setActiveSection(section);
-    };
-
-    const handleDeleteClick = () => {
-        setIsConfirmingClearHistory(false); // Ensure clear history confirmation is closed
-        setIsConfirmingDeleteAccount(true);
-    };
-
-    const handleConfirmDelete = () => {
-        // Call to deletion API or function here
-        alert("Account deleted!"); // Temporary for feedback
-        closeModal();
-    };
-
-    const handleCancelDelete = () => {
-        setIsConfirmingDeleteAccount(false);
-    };
-
-    const handleClearHistoryClick = () => {
-        setIsConfirmingDeleteAccount(false); // Ensure delete confirmation is closed
-        setIsConfirmingClearHistory(true);
-    };
-
-    const handleConfirmClearHistory = async () => {
-        try {
-            const response = await fetch('/delete_all_threads/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Include cookies for authentication
-            });
-
-            if (response.ok) {
-                // Redirect the user to index
-                window.location.href = '/';
-            } else {
-                const errorData = await response.json();
-                console.error("Error clearing history:", errorData);
-                alert("Failed to clear history: " + errorData.message);
-            }
-        } catch (error) {
-            console.error("Error clearing history:", error);
-            alert("Failed to clear history. Please try again later.");
-        }
-    };
-
-    const handleCancelClearHistory = () => {
-        setIsConfirmingClearHistory(false);
-    };
-
-    const handleEmailClick = () => {
-        window.open("mailto:support@camelai.com?subject=Delete%20account%20request", "_blank");
-    };
-
-    React.useEffect(() => {
-        const dialog = document.querySelector('#react-modal');
-        dialog.addEventListener('click', handleBackdropClick);
-        return () => dialog.removeEventListener('click', handleBackdropClick);
-    }, []);
-
-    return (
-        <div className="react-modal-padding">
-            <div className="react-modal-content">
-                <div className="react-modal-options">
-                    <button
-                        className={`react-modal-section-header ${activeSection === 'Account' ? 'active' : ''}`}
-                        onClick={() => handleSectionChange('Account')}
-                    >
-                        <img className="color-flip-100" src="/static/images/user-icon.png" alt="User icon" />
-                        <h1>Account</h1>
-                    </button>
-                    <button
-                        className={`react-modal-section-header ${activeSection === 'Shortcuts' ? 'active' : ''}`}
-                        onClick={() => handleSectionChange('Shortcuts')}
-                    >
-                        <img className="color-flip-100" src="/static/images/command-icon.png" alt="Command icon" />
-                        <h1>Shortcuts</h1>
-                    </button>
-                </div>
-                <div className="react-modal-body">
-                    {activeSection === 'Account' && (
-                        <>
-                            <div className="react-modal-as-element">
-                                <p>Account email</p>
-                                <p className="element">{userData.email}</p>
-                            </div>
-
-                            <hr />
-
-                            <div className="react-modal-as-element">
-                                <p>Payment status</p>
-                                <p className="element">{userData.payment_status_name}</p>
-                            </div>
-
-                            <hr />
-
-                            <div className="react-modal-as-element">
-                                <p>Member since</p>
-                                <p className="element">{userData.created_at}</p>
-                            </div>
-
-                            <hr />
-
-                            <div className="react-modal-as-element">
-                                <p>Version</p>
-                                <p className="element">0.3.1</p>
-                            </div>
-
-                            {!isEnterprise && (
-                            <>
-							<hr />
-                            <div className={`react-modal-as-element ${isConfirmingDeleteAccount ? 'confirmation-message' : ''}`}>
-                                <p>Delete account</p>
-                                {isConfirmingDeleteAccount ? (
-                                    temporary_no_delete ? (
-                                        <div className="confirmation-message-text">
-                                            <p>To delete your account, please send an email by clicking the button below. Your account will be deleted within 24 hours.</p>
-                                            <div className="confirmation-message-buttons">
-                                                <button className="alert-button" onClick={handleEmailClick}>
-                                                    <span>Send Email</span>
-                                                </button>
-                                                <button className="button" onClick={handleCancelDelete}>
-                                                    <span>Nevermind</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="confirmation-message-text">
-                                            <p>Are you sure you want to delete your account? Deleting your account will disconnect all of your apps and pause billing for subscribed users.</p>
-                                            <div className="confirmation-message-buttons">
-                                                <button className="alert-button" onClick={handleConfirmDelete}>
-                                                    <span>Yes, delete my account</span>
-                                                </button>
-                                                <button className="button" onClick={handleCancelDelete}>
-                                                    <span>Nevermind</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )
-                                ) : (
-                                    <button className="button delete" onClick={handleDeleteClick}>
-                                        <span>Delete account</span>
-                                    </button>
-                                )}
-                            </div>
-
-                            <hr />
-
-                            <div className={`react-modal-as-element ${isConfirmingClearHistory ? 'confirmation-message' : ''}`}>
-                                <p>Clear all chat history</p>
-                                {isConfirmingClearHistory ? (
-                                    <div className="confirmation-message-text">
-                                        <p>Are you sure you want to clear your chat history? This action is irreversible.</p>
-                                        <div className="confirmation-message-buttons">
-                                            <button className="alert-button" onClick={handleConfirmClearHistory}>
-                                                <span>Yes, clear my chat history</span>
-                                            </button>
-                                            <button className="button" onClick={handleCancelClearHistory}>
-                                                <span>Nevermind</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <button className="button delete" onClick={handleClearHistoryClick}>
-                                        <span>Clear history</span>
-                                    </button>
-                                )}
-                            </div>
-                            </>
-                            )}
-                        </>
-                    )}
-					{activeSection === 'Shortcuts' && (
-						<>
-							<div className="react-modal-as-element os-select">
-								<p>Operating system</p>
-								<div className="AP-toggle-content-container">
-									<button 
-										className={`AP-toggle-content-button ${shortcuts_osType === 'Mac' ? 'active' : ''}`} 
-										onClick={() => setshortcuts_osType('Mac')}
-									>
-										Mac
-									</button>
-									<button 
-										className={`AP-toggle-content-button ${shortcuts_osType === 'PC' ? 'active' : ''}`} 
-										onClick={() => setshortcuts_osType('PC')}
-									>
-										PC
-									</button>
-									<div className="slider"></div>
-								</div>
-							</div>
-							<div className="react-modal-as-element">
-								<p>New chat</p>
-								<p className="element">
-									{shortcuts_osType === 'Mac' ? 'cmd + K' : 'ctrl + K'}
-								</p>
-							</div>
-							<hr />
-							<div className="react-modal-as-element">
-								<div className="react-modal-element-with-tt">
-									<p>Navigate chat history</p>
-									<div className="icon-button small small-width" data-tooltip="In an active chat, use this shortcut to access your previously sent messages">
-										<img src="/static/images/question-icon.png" alt="Tooltip icon"/>
-									</div>
-								</div>
-								<p className="element">
-									{shortcuts_osType === 'Mac' ? 'option + ↑/↓' : 'alt + ↑/↓'}
-								</p>
-							</div>
-						</>
-					)}
-                </div>
-            </div>
-
-            <div className="react-modal-bottom-buttons">
-                <button className="button secondary" onClick={closeModal}>
-                    <span>Close</span>
-                </button>
-            </div>
-        </div>
-    );
-}
-
-if (document.getElementById('react-modal'))
-	ReactDOM.createRoot(document.getElementById('react-modal')).render(<Modal />);
-
-function Sidebar() {
-	const [threads, setThreads] = useState(() => userData.threads);
-	const [activeThreadId, setActiveThreadId] = useState(() => {
-		const pathParts = window.location.pathname.split('/');
-		return pathParts[pathParts.length - 1];
-	});
-
-	useEffect(() => {
-		const threadCreatedHandler = (event) => {
-			setThreads(prevThreads => [{ title: 'New Chat', id: event.detail.threadId, last_modified: Date.now()/1000 }, ...prevThreads]);
-			setActiveThreadId(event.detail.threadId);
-			window.history.pushState({}, '', `/chat/${event.detail.threadId}`);
-		}
-
-		const threadRenamedHandler = (event) => {
-			setThreads(prevThreads => {
-				const newThreads = [...prevThreads];
-				const threadIndex = newThreads.findIndex(thread => thread.id == event.detail.threadId);
-				newThreads[threadIndex].title = event.detail.title;
-				return newThreads;
-			});
-		}
-
-		window.addEventListener('threadCreated', threadCreatedHandler);
-		window.addEventListener('threadRenamed', threadRenamedHandler);
-
-		return () => {
-			window.removeEventListener('threadCreated', threadCreatedHandler);
-			window.removeEventListener('threadRenamed', threadRenamedHandler);
-		}
-	}, []);
-
-	const getDateCategory = (lastModified) => {
-		const now = new Date();
-		const threadDate = new Date(lastModified * 1000); // Convert Unix timestamp to milliseconds
-		
-		// Reset time to midnight for accurate day comparison
-		now.setHours(0, 0, 0, 0);
-		threadDate.setHours(0, 0, 0, 0);
-		
-		const diffTime = now.getTime() - threadDate.getTime();
-		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-	  
-		if (diffDays === 0) return 'Today';
-		if (diffDays === 1) return 'Yesterday';
-		if (diffDays <= 7) return 'Last 7 days';
-		if (diffDays <= 30) return 'Last 30 days';
-		return 'Over 30 days';
-	  };
-
-	let currentCategory = null;
-
-	return (
-		<>
-			{threads.map((threadInfo, index) => {
-				const isActive = activeThreadId == threadInfo.id;
-				const category = getDateCategory(threadInfo.last_modified);
-
-				let categoryHeader = null;
-				if (category !== currentCategory) {
-					currentCategory = category;
-					categoryHeader = <div className="thread-category-header">{category}</div>;
-				}
-
-				return (
-					<React.Fragment key={threadInfo.id}>
-						{categoryHeader}
-						<div>
-							<a 
-								href={`/chat/${threadInfo.id}`}
-								className={`side-nav-link ${isActive ? 'active-link' : ''}`}
-							>
-								<span title={threadInfo.title}>{threadInfo.title}</span>
-							</a>
-						</div>
-					</React.Fragment>
-				);
-			})}
-		</>
-	);
-}
-
-if (document.getElementById('react-sidebar'))
-	ReactDOM.createRoot(document.getElementById('react-sidebar')).render(<Sidebar />);
-
-let artifactContext = null;
 // -------------------- *** Artifacts Pane *** -------------------- //
 function ArtifactPane({ artifacts }) {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -2268,17 +1890,6 @@ function ArtifactPane({ artifacts }) {
 	const [isZoomed, setIsZoomed] = useState(false);
 	const prevArtifactsLength = useRef(0);
   
-	// Update artifact context when current artifact changes
-	useEffect(() => {
-	  if (artifacts.length === 0) return;
-	  
-	  const currentArtifact = artifacts[currentIndex];
-	  artifactContext = {
-		id: currentArtifact.id,
-		title: currentArtifact.title,
-	  };
-	}, [currentIndex]);
-
 	useEffect(() => {
 		if (artifacts.length === 0) return;
 		
@@ -2318,21 +1929,16 @@ function ArtifactPane({ artifacts }) {
 	  artifactPane.classList.toggle('open', isOpen);
 	}, [isOpen]);
   
-	// Handle toggle artifact pane event
+	// Expose toggle function to window
 	useEffect(() => {
-	  const handleToggleArtifactPane = () => {
-		setIsOpen(prev => {
-		  const newIsOpen = !prev;
-		  document.cookie = `artifactPaneOpen=${newIsOpen}; path=/; max-age=31536000`;
-		  return newIsOpen;
-		});
-	  };
-  
-	  // Listen for custom toggle event instead of exposing global function
-	  window.addEventListener('toggleArtifactPane', handleToggleArtifactPane);
+	  window.toggleArtifactPane = () => setIsOpen(prev => {
+		const newIsOpen = !prev;
+		document.cookie = `artifactPaneOpen=${newIsOpen}; path=/; max-age=31536000`;
+		return newIsOpen;
+	  });
   
 	  return () => {
-		window.removeEventListener('toggleArtifactPane', handleToggleArtifactPane);
+		delete window.toggleArtifactPane;
 	  };
 	}, []);
   
@@ -2519,6 +2125,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
                 },
                 body: JSON.stringify({
                     dashboard_id: dashboardId,
@@ -2583,6 +2190,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
                 },
             });
             if (!response.ok) {
@@ -2624,6 +2232,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
                 },
             })
             .then(response => {
@@ -2661,6 +2270,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
                 },
                 body: JSON.stringify({
                     title: newDashboardTitle,
@@ -2711,56 +2321,60 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                 <div className="right">
                     <button 
                         onClick={() => onCycle('next')} 
-                        className={`icon-button small ${isLastArtifact ? 'disabled' : ''}`} 
+                        className={`icon-button ${isLastArtifact ? 'disabled' : ''}`} 
                         data-tooltip="Previous Artifact"
                         disabled={isLastArtifact || !hasArtifacts}
                     >
-                        <img className="chevron-left" src="/static/images/chevron-up.png" alt="previous artifact" />
+                        <ChevronLeftIcon className={`heroicon ${isLastArtifact ? 'color-mode-40' : ''}`} aria-label="previous artifact"/>
                     </button>
                     
                     <button 
                         onClick={() => onCycle('prev')} 
-                        className={`icon-button small ${isFirstArtifact ? 'disabled' : ''}`} 
+                        className={`icon-button ${isFirstArtifact ? 'disabled' : ''}`} 
                         data-tooltip="Next Artifact"
                         disabled={isFirstArtifact || !hasArtifacts}
                     >
-                        <img className="chevron-right" src="/static/images/chevron-up.png" alt="next artifact" />
+                        <ChevronRightIcon className={`heroicon ${isFirstArtifact ? 'color-mode-40' : ''}`} aria-label="next artifact"/>
                     </button>
 
                     {artifact?.download_url ? (
                         <a 
                             href={artifact?.download_url} 
                             download={artifact?.filename || artifact?.title}
-                            className="icon-button small" 
+                            className="icon-button" 
                             data-tooltip="Download data"
                         >
-                            <img src="/static/images/download-icon.png" alt="download artifact" />
+                            <ArrowDownTrayIcon className="heroicon" aria-label="download artifact" />
                         </a>
                     ) : (
                         <button 
-                            className="icon-button small disabled" 
+                            className="icon-button disabled" 
                             data-tooltip="Download data"
                             disabled
                         >
-                            <img src="/static/images/download-icon.png" alt="download artifact" />
+                            <ArrowDownTrayIcon className="heroicon" aria-label="download artifact" />
                         </button>
                     )}
 
                     <button 
                         onClick={onRefresh} 
-                        className={`icon-button small ${isRefreshing ? 'refreshing' : ''}`} 
+                        className={`icon-button ${isRefreshing ? 'refreshing' : ''}`} 
                         data-tooltip="Refresh"
                         disabled={isRefreshing}
                     >
-                        <img src="/static/images/refresh-icon.png" alt="refresh artifact" />
+                        <ArrowPathIcon className="heroicon" aria-label="refresh artifact" />
                     </button>
 
-                    <button onClick={onZoom} id="zoom-artifact-btn" className="icon-button small mobile-hidden" data-tooltip={isZoomed ? "Minimize" : "Expand"}>
-                        <img id="zoom-artifact-img" src={`/static/images/${isZoomed ? 'minimize' : 'expand'}-icon.png`} alt="expand/minimize artifact" />
+                    <button onClick={onZoom} id="zoom-artifact-btn" className="icon-button mobile-hidden" data-tooltip={isZoomed ? "Minimize" : "Expand"}>
+                        {isZoomed ? (
+                            <ArrowsPointingInIcon id="zoom-artifact-img" className="heroicon" aria-label="Minimize artifact" />
+                        ) : (
+                            <ArrowsPointingOutIcon id="zoom-artifact-img" className="heroicon" aria-label="Expand artifact" />
+                        )}
                     </button>
 
-                    <button onClick={onClose} className="icon-button small" data-tooltip="Close">
-                        <img src="/static/images/x-icon.png" alt="close" />
+                    <button onClick={onClose} className="icon-button" data-tooltip="Close">
+                        <XMarkIcon className="heroicon" aria-label="close" />
                     </button>
 
                 </div>
@@ -2801,11 +2415,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
 												data-tooltip="View in dashboard"
 											>
 												<span>View</span>
-												<img 
-													src="/static/images/arrow-right-up-icon.png" 
-													alt="View" 
-													className="color-flip-80"
-												/>
+												<ArrowTopRightOnSquareIcon className="heroicon " aria-label="View"/>
 											</a>
 										) : (
 											<button 
@@ -2911,7 +2521,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
 															onClick={() => setShowNewDashboardForm(true)}
 														>
 															<span>Create new dashboard</span>
-															<img className="color-flip-80" src="/static/images/plus-white.png" alt="plus"/>
+															<PlusIcon className="heroicon" aria-label="Create new dashboard"/>
 														</button>
 													</>
                                                 )}
@@ -2956,9 +2566,10 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
                             <iframe className="artifact" src={artifact.url} ref={iframeRef} name="artifactFrame" />
                         </>
                     ) : (
+                        // this should never show up
                         <div className="artifact-pane-body-content-empty">
                             <p>No artifacts yet</p>
-                            <p>As you chat with camelAI, it will create artifacts that show up here.</p>
+                            <p>As you chat, artifacts will show up here.</p>
                         </div>
                     )}
                 </div>

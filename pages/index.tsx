@@ -1,9 +1,5 @@
 import type { GetServerSideProps } from 'next'
-import dynamic from 'next/dynamic'
-
-const ChatPage = dynamic(() => import('../components/ChatPage'), {
-  ssr: false
-})
+import ChatPage from '../components/ChatPage'
 
 interface IndexProps {
   initialMessages: any[]

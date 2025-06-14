@@ -9,6 +9,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/markdown-it": "^14.1.2",
     "@types/react-dom": "^18.3.0",
     "@vscode/markdown-it-katex": "^1.1.1",

@@ -1,0 +1,2075 @@
+:root {
+
+    /* font sizes */
+    --fs-h1: 1.3rem;
+    --fs-h2: 1.1rem;
+    --fs-h3: 1.05rem;
+    --fs-h4: 1rem;
+    --fs-p: 1rem;
+    --fs-code: 0.9rem;
+    --fs-mini: 0.8rem;
+
+    /* font weights */
+    --fw-light: 300;
+    --fw-normal: 400;
+    --fw-semi: 500;
+    --fw-bold: 600;
+
+    /* font family for text (monospace default used for code) */
+    --font-family: -apple-system, BlinkMacSystemFont,"Segoe UI","Roboto","Helvetica Neue","Ubuntu";
+
+    /* Color variables */
+    --clr-white: #ffffff;
+    --clr-white-80: #ffffffc6;
+    --clr-white-40: #ffffff73;
+    --clr-white-20: #ffffff31;
+    --clr-white-10: #ffffff0e;
+
+    --clr-black: #000000;
+    --clr-black-80: #000000b2;
+    --clr-black-70: #0000009b;
+    --clr-black-40: #00000081;
+    --clr-black-30: #0000003b;
+    --clr-black-20: #00000030;
+    --clr-black-10: #0000000e;
+
+    /* darkmode colors */
+    --clr-red: #ff3224;
+    --clr-red-sheer: #fe11001e;
+    --clr-yellow: #EDAF5E;
+    --clr-yellow-sheer: #edaf5e26;
+    --clr-blue: #8EBFFF;
+    --clr-blue-sheer: #8ebfff20;
+    --clr-green: #85c0a3;
+
+    --clr-dark-background: #0C0F12;
+    --clr-dark-background-40: #0c0f126b;
+    --clr-dark-background-20: #0c0f1227;
+    --clr-medium-background: #13181F;
+    --clr-light-background: #20252C;
+    --clr-light-background-40: #20252c6c;
+    --clr-light-background-20: #20252ca1;
+
+	--clr-text-input-outline: #30353B;
+    --clr-pb-img-border: #b6bdc56e;
+    --clr-code-block-top-bar: #20252C;
+
+	--clr-code-font: #daddf3;
+	--clr-link: #4F94FF;
+
+    --clr-spinner-1: #ffffff;
+    --clr-spinner-2: #aef8ff;
+    --clr-spinner-3: #a8beff;
+    --clr-spinner-4: #ffcfa5;
+    --clr-spinner-5: #ffb0aa;
+    --clr-spinner-6: #f0a2ff;
+    --clr-spinner-7: #ff98f8;
+
+    /* lightmode colors */
+    --clrlight-black: #000000d1;
+    --clrlight-red: #cf4a4a;
+    --clrlight-red-sheer: #f66e6e20;
+    --clrlight-yellow: #7f4b07;
+    --clrlight-yellow-sheer: #edaf5e42;
+    --clrlight-blue: #1f3858;
+    --clrlight-blue-sheer: #1f38581f;
+    --clrlight-green: #82a493;
+
+    --clrlight-prompt-button-outline: #CED5E1;
+    --clrlight-dark-background: #DAE1ED;
+    --clrlight-dark-background-20: #ced5e122;
+    --clrlight-medium-background: #F1F3F7;
+    --clrlight-light-background: #F9FCFF;
+    --clrlight-light-background-40: #f9fcff54;
+    --clrlight-light-background-20: #ffffff31;
+
+	--clrlight-text-input-outline: #bebebe;
+    --clrlight-pb-img-border: #84848459;
+    --clrlight-code-block-top-bar: #e4eaf0;
+
+	--clrlight-code-font: #262734;
+	--clrlight-link: #0066ff;
+
+    --clrlight-spinner-1: #383838;
+    --clrlight-spinner-2: #4D7FFF;
+    --clrlight-spinner-3: #00E5FF;
+    --clrlight-spinner-4: #FFA500;
+    --clrlight-spinner-5: #FF5555;
+    --clrlight-spinner-6: #FF00E5;
+    --clrlight-spinner-7: #B300FF;
+
+    /* Color Variables used throughout the code */
+    /* Lightmode configuration */
+
+    /* backgrounds */
+    --clr-var-primary-background: var(--clrlight-medium-background);
+    --clr-var-light-background: var(--clrlight-light-background);
+    --clr-var-light-background-20: var(--clrlight-light-background-20);
+    --clr-var-dark-background: var(--clrlight-dark-background);
+    --clr-var-dark-background-40: var(--clrlight-dark-background-40);
+    --clr-var-dark-background-20: var(--clrlight-dark-background-20);
+    --clr-var-code-block-background: var(--clr-white);
+    --clr-var-math-block-background: var(--clr-white);
+    --clr-var-code-block-top-bar-background: var(--clrlight-code-block-top-bar);
+
+    /* text */
+    --clr-var-text: var(--clrlight-black);
+    --clr-var-text-80: var(--clr-black-80);
+    --clr-var-text-40: var(--clr-black-40);
+    --clr-var-text-20: var(--clr-black-20);
+    --clr-var-code-font: var(--clrlight-code-font);
+    --clr-var-link: var(--clrlight-link);
+
+    /* warnings and alerts */
+    --clr-var-red-alert: var(--clrlight-red);
+    --clr-var-red-sheer: var(--clrlight-red-sheer);
+    --clr-var-yellow-warning: var(--clrlight-yellow);
+    --clr-var-yellow-sheer: var(--clrlight-yellow-sheer);
+    
+    /* misc */
+    --clr-var-text-input-outline: var(--clrlight-text-input-outline);
+    --clr-var-prompt-button-outline: var(--clrlight-prompt-button-outline);
+    --clr-var-button-hover: var(--clr-black-10);
+
+    /* loading spinner */
+    --clr-var-spinner-1: var(--clrlight-spinner-1);
+    --clr-var-spinner-2: var(--clrlight-spinner-2);
+    --clr-var-spinner-3: var(--clrlight-spinner-3);
+    --clr-var-spinner-4: var(--clrlight-spinner-4);
+    --clr-var-spinner-5: var(--clrlight-spinner-5);
+    --clr-var-spinner-6: var(--clrlight-spinner-6);
+    --clr-var-spinner-7: var(--clrlight-spinner-7);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Darkmode configuration */
+
+        /* backgrounds */
+        --clr-var-primary-background: var(--clr-medium-background);
+        --clr-var-light-background: var(--clr-light-background);
+        --clr-var-light-background-20: var(--clr-light-background-20);
+        --clr-var-dark-background: var(--clr-dark-background);
+        --clr-var-dark-background-40: var(--clr-dark-background-40);
+        --clr-var-dark-background-20: var(--clr-dark-background-20);
+        --clr-var-code-block-background: var(--clr-black);
+        --clr-var-math-block-background: var(--clr-light-background-20);
+        --clr-var-code-block-top-bar-background: var(--clr-code-block-top-bar);
+
+        /* text */
+        --clr-var-text: var(--clr-white);
+        --clr-var-text-80: var(--clr-white-80);
+        --clr-var-text-40: var(--clr-white-40);
+        --clr-var-text-20: var(--clr-white-20);
+        --clr-var-code-font: var(--clr-code-font);
+        --clr-var-link: var(--clr-link);
+
+        /* warnings and alerts */
+        --clr-var-red-alert: var(--clr-red);
+        --clr-var-red-sheer: var(--clr-red-sheer);
+        --clr-var-yellow-warning: var(--clr-yellow);
+        --clr-var-yellow-sheer: var(--clr-yellow-sheer);
+
+        /* misc */
+        --clr-var-text-input-outline: var(--clr-text-input-outline);
+        --clr-var-prompt-button-outline: var(--clr-text-input-outline);
+        --clr-var-hr: var(--clr-white-10);
+        --clr-var-button-hover: var(--clr-white-10);
+
+        /* loading spinner */
+        --clr-var-spinner-1: var(--clr-spinner-1);
+        --clr-var-spinner-2: var(--clr-spinner-2);
+        --clr-var-spinner-3: var(--clr-spinner-3);
+        --clr-var-spinner-4: var(--clr-spinner-4);
+        --clr-var-spinner-5: var(--clr-spinner-5);
+        --clr-var-spinner-6: var(--clr-spinner-6);
+        --clr-var-spinner-7: var(--clr-spinner-7);
+    }
+}
+/* ==================================================================== */
+/*  Section: Misc styling                                               */
+/*  Purpose: Styles used in multiple app components:                    */
+/*      - Heroicons */
+/*      - Icon-buttons + on hover tooltip styling */
+/*      - Warning message*/
+/*      - Error message*/
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+/* --- Heroicon --- */
+.heroicon {
+    width: 16px;
+    height: 16px;
+    
+    /* default color of icons: 80% black in light mode */
+    color: rgba(0, 0, 0, 0.8); 
+    transition: color 0.2s ease;
+}
+.heroicon.color-mode-100 {
+    /* 100% black in light mode */
+    color: rgba(0, 0, 0, 1); 
+    transition: color 0.2s ease;
+}
+.heroicon.color-mode-40 {
+    /* faded icons: 40% black in light mode */
+    color: rgba(0, 0, 0, 0.4); 
+    transition: color 0.2s ease;
+}
+/* Dark mode support for heroicons */
+@media (prefers-color-scheme: dark) {
+    .heroicon {
+        /* 80% white in dark mode */
+        color: rgba(255, 255, 255, 0.8); 
+    }
+    .heroicon.color-mode-100 {
+        /* 100% white in dark mode */
+        color: rgba(255, 255, 255, 1); 
+    }
+    .heroicon.color-mode-40 {
+        /* 40% white in dark mode */
+        color: rgba(255, 255, 255, 0.4); 
+    }
+}
+/* Size variants for heroicons */
+.heroicon-sm {
+    width: 14px;
+    height: 14px;
+}
+.heroicon-lg {
+    width: 20px;
+    height: 20px;
+}
+.heroicon-xl {
+    width: 24px;
+    height: 24px;
+}
+.heroicon-xxl {
+    width: 30px;
+    height: 30px;
+}
+
+/* --- Icon buttons --- */
+.icon-button {
+    border-radius: 2px;
+    padding: 4px;
+    margin: 0px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+.icon-button:disabled {
+    cursor: default !important;
+}
+.icon-button:hover {
+    background-color: var(--clr-var-button-hover);
+    border-radius: 3px;
+}
+/* tool tip styling */
+.icon-button::after {
+    content: attr(data-tooltip);
+    position: absolute;
+
+    left: 50%;
+    bottom: -26px;
+    transform: translateX(-50%);
+    max-width: 90vw;
+    z-index: 20;
+
+    background-color: var(--clr-var-dark-background);
+    color: var(--clr-var-text-80);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: var(--fs-code);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+    transition-delay: 0.3s;
+}
+.icon-button:hover::after {
+    opacity: 1 !important;
+    visibility: visible;
+}
+.icon-button:not([data-tooltip])::after,
+.icon-button[data-tooltip=""]::after {
+    display: none;
+}
+/* adjusting the tool tip position if needed */
+.icon-button.left-align-tooltip::after {
+    left: 0 !important; 
+    transform: translateX(0%) !important;
+}
+.icon-button.code-block-button::after {
+    left: -105% !important; 
+}
+/* animation for add data sources button, if no data sources are selected */
+@keyframes pulseButton {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+.icon-button.no-sources-selected {
+    animation: pulseButton 2s ease-in-out infinite;
+}
+.icon-button.no-sources-selected:hover {
+    animation: none;
+}
+/* animation for refresh button in artifact pane */
+.icon-button.refreshing svg {
+    animation: reverse-spin 0.6s ease-in-out infinite;
+}
+@keyframes reverse-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.icon-button:active {
+    background: var(--clr-var-dark-background);
+}
+/* --- Warning message --- */
+.warning-message {
+    background-color: var(--clr-var-yellow-sheer);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    width: -webkit-fill-available;
+}
+.warning-message p,
+.warning-message span {
+    color: var(--clr-var-yellow-warning);
+    font-size: var(--fs-code);
+    font-weight: var(--fw-semi);
+    margin: 0px;
+    display: block !important;
+}
+.warning-message.mini-font p,
+.warning-message.mini-font span {
+    font-size: var(--fs-mini);
+}
+.warning-message li {
+    color: var(--clr-var-yellow-warning);
+    font-size: var(--fs-code);
+    font-weight: var(--fw-semi);
+    /* margin: 0px; */
+    display: list-item !important;
+}
+.warning-message ul {
+    margin: 0;
+    padding: 0 20px !important;
+    list-style-type: disc !important; 
+}
+/* --- Error message --- */
+.error-message {
+    background-color: var(--clr-var-red-sheer);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    width: -webkit-fill-available;
+}
+.error-message p,
+.error-message li,
+.error-message span {
+    color: var(--clr-var-red-alert);
+    font-size: var(--fs-code);
+    font-weight: var(--fw-semi);
+    margin: 0px;
+}
+.error-message ul {
+    margin: 0px;
+}
+
+/* ==================================================================== */
+/*  Section: Chat App                                                   */
+/*  Purpose: Styles for the main app containers and messages            */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+.react-chat-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+	flex: 1;
+    transition: width 0.2s ease;
+}
+.chat-container {
+    /* top padding for the first message */
+    padding: 40px 0 0 0;
+    height: calc(100dvh - 7.9rem);
+    overflow-y: scroll;
+    max-width: 100dvw;
+    width: calc(100% - 1.4rem);
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+.chat-container.empty {
+    /* justify-content: center; */
+}
+.chat-container-bottom-padding {
+    padding: 2.25rem;
+}
+.chat-message {
+    max-width: 48rem;
+    width: 100%;
+}
+.user-message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 10px 0px 2rem 0px;
+}
+.camel-message-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+.camel-message-text.centered {
+    align-items: center;
+}
+span.chat-error-message {
+    font-weight: var(--fw-semi);
+}
+.camel-message-text.loading {
+    align-items: center;
+    flex-direction: row;
+}
+/* the loading spinner shown when the assistant is between tool calls */
+.loading-spinner {
+    width: 15px;
+    height: 15px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    border-top: 3px solid var(--clr-var-text);
+    border-left: 3px solid var(--clr-var-text);
+    animation: spin 1.5s linear infinite, colorChange 8s ease-in-out infinite;
+    margin: 0 10px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes colorChange {
+    0%, 100% { border-top-color: var(--clr-var-spinner-1); border-left-color: var(--clr-var-spinner-1); }
+    15% { border-top-color: var(--clr-var-spinner-2); border-left-color: var(--clr-var-spinner-2); }
+    30% { border-top-color: var(--clr-var-spinner-3); border-left-color: var(--clr-var-spinner-3); }
+    45% { border-top-color: var(--clr-var-spinner-4); border-left-color: var(--clr-var-spinner-4); }
+    60% { border-top-color: var(--clr-var-spinner-5); border-left-color: var(--clr-var-spinner-5); }
+    75% { border-top-color: var(--clr-var-spinner-6); border-left-color: var(--clr-var-spinner-6); }
+    90% { border-top-color: var(--clr-var-spinner-7); border-left-color: var(--clr-var-spinner-7); }
+}
+/* --- User messages --- */
+.user-message-text {
+    background-color: var(--clr-var-dark-background);
+    border-radius: 15px;
+    padding: 10px;
+    /* text-align: right; */
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.user-message-text p {
+    margin: 0px !important;
+    white-space: break-spaces;
+    word-break: break-word;
+}
+/* --- bottom of chat message --- */
+/* chat message bottom bar styling for copy, thumbs up, thumbs down  */
+.chat-message-bottom-bar {
+    margin: 0px 0px 10px 0px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.5rem;
+    height: 0;
+    opacity: 0;
+    transition: all 0.2s ease-out;
+}
+.chat-message-bottom-bar.latest:not(.streaming),
+.chat-message:hover .chat-message-bottom-bar:not(.streaming) {
+    height: 30px;
+    opacity: 1;
+    margin: 0px 0px 10px 0px;
+}
+/* ==================================================================== */
+/*  Section: Chat App - Text input field + components                   */
+/*  Purpose: Styles for:                                                */
+/*      - Anchor for chat input field */
+/*      - Chat input field */
+/*      - Data source select + drop down */
+/*      - Model switcher */
+/*      - Graph mode toggle */
+/*      - Send button */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+.chat-anchor-section {
+    width: 100%;
+    /* height: 60px; */
+    position: relative;
+}
+.chat-anchor-section.empty-chat {
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 20dvh;
+    row-gap: 1rem;
+}
+.chat-text-input {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.chat-text-input-field {
+    border: 1px solid var(--clr-var-text-input-outline);
+    border-radius: 15px;
+    background-color: var(--clr-var-dark-background);
+
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0.5rem 0.5rem 1rem;
+    width: calc(100% - 2rem);
+    max-width: 48rem;
+
+    position: absolute;
+    z-index: 10;
+    bottom: 1.25rem;
+
+    /* container to create a breakpoint for the chat input bottom row 
+    (the row with the data source menu, model switcher, graph mode toggle, and send button) */
+    container-type: inline-size;
+    container-name: chat-input;
+}
+.chat-text-input-field.empty-chat {
+    position: static;
+    width: calc(100% - 3rem);
+}
+.chat-input-editable {
+    font-size: var(--fs-p);
+    font-weight: var(--fw-light);
+    color: var(--clr-var-text);
+    background-color: transparent;
+
+    min-height: 24px;
+    max-height: 200px;
+    overflow-y: auto;
+    word-break: break-word;
+    outline: none;
+
+    width: 100%;
+    flex: 1;
+    outline: none;
+    resize: none;
+    overflow-y: scroll;
+    line-height: 1.4;
+    font-family: var(--font-family);
+    max-height: calc(1.4rem * 14 + 1.4rem); 
+}
+.chat-input-editable[data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: var(--clr-var-text-20);
+}
+.chat-input-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+}
+.chat-input-bottom-row-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 3px;
+}
+@container chat-input (min-width: 400px) {
+    .chat-input-bottom-row {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    .chat-input-bottom-row-right {
+        width: auto !important;
+        display: flex !important;
+    }
+    .chat-selected-ds-tag {
+        max-width: 220px !important;
+    }
+}
+.chat-input-bottom-row-right {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+.ci-right-side-center-content {
+    display: flex;
+    height: min-content;
+}
+/* --- Data Source selection --- */
+.chat-ds-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+.chat-ds-select-container {
+    position: relative;
+}
+.chat-selected-ds-tag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 8px;
+    max-width: 180px;
+    background-color: var(--clr-var-primary-background);
+    border-radius: 5px;
+    padding: 2px 2px 2px 5px;
+}
+.chat-ds-select-menu-item img,
+.chat-selected-ds-tag img {
+    width: var(--fs-p);
+    height: var(--fs-p);
+}
+img.chat-ds-tag-icon {
+    border: 1px solid var(--clr-var-text-input-outline);
+    border-radius: 50%;
+}
+.chat-selected-ds-tag span,
+.chat-ds-select-menu-item span {
+    font-size: var(--fs-code);
+    color: var(--clr-var-text-80);
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chat-selected-ds-tag.empty {
+    background-color: var(--clr-var-dark-background-20);
+    border: 1px solid var(--clr-var-text-input-outline);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+.chat-selected-ds-tag.empty span {
+    color: var(--clr-var-text-40);
+}
+.chat-ds-select-menu {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    background-color: var(--clr-var-primary-background);
+    border-radius: 5px;
+    padding: 5px;
+    width: 260px;
+    margin: 5px 0 0 0;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--clr-var-light-background-20);
+    z-index: 10;
+    overflow: auto;
+    max-height: 50dvh;
+}
+.chat-ds-select-menu.active-chat {
+    bottom: 30px;
+}
+.chat-ds-select-menu-scroll-container {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+button.chat-ds-select-menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 8px;
+    border-radius: 5px;
+    padding: 5px;
+}
+button.chat-ds-select-menu-item:hover {
+    background-color: var(--clr-var-dark-background);
+}
+/* --- Model Switcher --- */
+.model-switcher-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    border-radius: 5px;
+    height: 30px;
+    margin: 3px 0;
+    padding: 0 5px;
+}
+.model-switcher-container:hover {
+    background-color: var(--clr-var-primary-background);
+}
+.model-switcher-selected-model-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.active-model {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.active-model span {
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    white-space: nowrap;
+}
+.active-model img {
+    width: 12px;
+}
+.model-switcher-menu {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--clr-var-primary-background);
+    border-radius: 5px;
+    padding: 5px;
+    width: 240px;
+    margin: 5px 0 0 0;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--clr-var-light-background-20);
+    overflow: auto;
+    max-height: 50dvh;
+    position: absolute;
+    bottom: 30px;
+    right: 0px;
+    z-index: 10;
+}
+button.model-switcher-menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    column-gap: 8px;
+    border-radius: 5px;
+    padding: 8px;
+}
+button.model-switcher-menu-item:hover {
+    background-color: var(--clr-var-dark-background);
+}
+span.model-name {
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-code);
+    padding: 5px 0;
+}
+span.model-description {
+    color: var(--clr-var-text-40);
+    font-size: var(--fs-mini);
+}
+span.new-chat-label {
+    color: var(--clr-var-text-40);
+    font-size: var(--fs-mini);
+    border-radius: 8px;
+    background-color: var(--clr-var-dark-background);
+    padding: 5px;
+}
+.model-switcher-menu-item span {
+    /* flex: 1; */
+    text-align: left;
+}
+.model-switcher-menu-item img {
+    width: var(--fs-p);
+    height: var(--fs-p);
+}
+/* ==================================================================== */
+/*  Section: Chat recommendations                                       */
+/*  Purpose: Styles the recommendations in active and empty chat        */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+.chat-recommendations {
+    width: 100%;
+    max-width: 49rem;
+}
+.chat-recommendations.empty-chat {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 0.8rem;
+}
+.chat-recommendations.empty-chat h3 {
+    width: calc(100% - 2rem);
+    color: var(--clr-var-text-80);
+}
+.chat-recommendations-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    align-items: flex-start;
+}
+.chat-recommendations-list.empty-chat {
+    width: calc(100% - 2rem);
+    max-width: calc(48rem + 16px);
+    display: flex;
+    flex-direction: column;
+    column-gap: 8px;
+    justify-content: space-between;
+}
+.chat-recommendation-button {
+    padding: 5px;
+    color: var(--clr-var-text-80);
+    border: 2px solid var(--clr-var-prompt-button-outline);
+    border-radius: 10px;
+    text-align: left;
+    font-size: var(--fs-code);
+    display: flex;
+    
+    /* Add animation properties */
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.chat-recommendation-button:hover {
+    background-color: var(--clr-var-button-hover);
+}
+.chat-recommendation-button.loading {
+    cursor: default;
+    width: 100%;
+}
+.chat-recommendation-button.loading {
+    animation: slideUp 1s ease forwards;
+}
+/* Slide up animation for recommendations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Add staggered delay for each button */
+.chat-recommendation-button:nth-child(1) {
+    animation-delay: 0.1s;
+}
+.chat-recommendation-button:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.chat-recommendation-button:nth-child(3) {
+    animation-delay: 0.3s;
+}
+/* Loading line animation used to fill the recommendations in the empty chat */
+.loading-lines {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0;
+}
+.loading-lines::before,
+.loading-lines::after,
+.loading-lines div {
+    content: "";
+    height: 8px;
+    border-radius: 4px;
+    background: var(--clr-var-text-40);
+    animation: loadingLines 2s ease-in-out infinite;
+}
+.loading-lines::before {
+    width: 100%;
+    animation-delay: 0s;
+}
+.loading-lines div {
+    width: 85%;
+    animation-delay: 0.25s;
+}
+.loading-lines::after {
+    width: 70%;
+    animation-delay: 0.5s;
+}
+@keyframes loadingLines {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+/* ==================================================================== */
+/*  Section: Thumbs Down Feedback menu                                  */
+/*  Purpose: Small submenu shown when a user thumbs down a message      */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: var(--clr-var-light-background-20);
+}
+.feedback-container p {
+    margin: 0px !important;
+}
+.feedback-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.other-feedback-input {
+    display: flex;
+    flex-direction: row;
+    column-gap: 5px;
+}
+.other-feedback-input-field {
+    flex: 1;
+    font-size: var(--fs-p);
+    font-weight: var(--fw-light);
+    color: var(--clr-var-text);
+    background-color: var(--clr-var-dark-background-20);
+    border: none;
+    border-radius: 5px;
+    padding: 3px;
+    /* width: 100%; */
+    outline: none;
+    resize: none;
+    overflow-y: scroll;
+    line-height: 1.8;
+    font-family: var(--font-family);
+}
+/* ==================================================================== */
+/*  Section: Tool Calls                                                 */
+/*  Purpose: Styles the "Analysis" portion of each message              */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+.tool-call-container { 
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    position: relative;
+    padding: 0 0 10px 0;
+    margin: 0 0 10px 0;
+}
+.tool-call-container::before { 
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 30px;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--clr-var-prompt-button-outline);
+}
+.tool-messages-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    /* margin-bottom: 15px; */
+    width: 100%;
+}
+
+.tool-messages-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.tool-messages-toggle:hover span,
+.tool-messages-toggle:hover img,
+.tool-messages-toggle:hover svg {
+    opacity: 0.6;
+}
+.tool-messages-toggle span {
+    transition: opacity 0.2s ease;
+}
+
+.tool-messages-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-semi);
+}
+
+.tool-messages-toggle img,
+.tool-messages-toggle svg {
+    height: 12px;
+    width: 12px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.tool-messages-toggle img.chevron-left,
+.tool-messages-toggle svg.chevron-left {
+    transform: rotate(90deg);
+}
+
+.tool-messages-toggle img.chevron-down,
+.tool-messages-toggle svg.chevron-down {
+    transform: rotate(180deg);
+}
+
+.tool-messages {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    max-height: 10000px;
+    padding-top: 10px;
+}
+
+.tool-messages.collapsed {
+    max-height: 0;
+}
+
+.tool-call {
+    display: flex;
+    flex-direction: column;
+    /* row-gap: 5px; */
+    margin: 0px;
+    padding: 10px;
+    border-radius: 10px;
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    max-height: 500px;
+}
+
+.tool-call-expanded-wrapper {
+    overflow: hidden;
+}
+
+.tool-call-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tool-call-header-icon {
+    height: 1rem;
+    width: 1.1rem;
+    display: flex;
+    justify-content: center;
+}
+img.tool-call-logo {
+    height: 1rem;
+}
+img.tool-call-logo.rounded {
+    height: 1rem;
+    border: 1px solid var(--clr-var-prompt-button-outline);
+    border-radius: 50%;
+    opacity: 1;
+}
+.tool-call-content {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tool-call-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-mini);
+    color: var(--clr-var-text-80);
+    padding: 0 0 5px 0;
+}
+/* this targets all siblings of the header, including the artifacts of the tool call which I could not target otherwise */
+.tool-call-header ~ * {
+    margin-left: 20px; 
+}
+.tool-call-body-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+
+    padding: 10px 0 0 0;
+}
+/* --- Tool call: Query, Graph, Code --- */
+.tool-call-ec-section {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    color: var(--clr-var-text-80);
+    font-weight: var(--fw-light);
+}
+.tool-call-ec-section p {
+    font-size: var(--fs-mini) !important;
+    margin: 0 !important;
+    color: var(--clr-var-text-80);
+    font-weight: var(--fw-normal);
+}
+.code-block code.tool-call-code{
+    overflow-x: scroll;
+    max-height: 10rem;
+}
+.code-block.no-margin {
+    margin: 0;
+}
+.code-block.smaller-font code {
+    font-size: var(--fs-mini);
+}
+.tool-call-ec-ds-tag {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    column-gap: 5px;
+    padding: 3px 7px;
+    border-radius: 8px;
+    width: fit-content;
+    background-color: var(--clr-var-light-background);
+    font-size: var(--fs-mini);
+}
+/* --- Tool call: Federated Query --- */
+.tool-call-data-sources {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+/* --- Tool call: Planning --- */
+.tool-call-planning {
+    background-color: var(--clr-var-code-block-background);
+    padding: 0px 10px;
+    border-radius: 5px;
+    margin: 0;
+}
+.tool-call-planning p, 
+.tool-call-planning code, 
+.tool-call-planning li, 
+.tool-call-planning ul, 
+.tool-call-planning ol  {
+    font-size: var(--fs-mini) !important;
+    margin: 10px 0 !important;
+    color: var(--clr-var-text-80);
+    font-weight: var(--fw-normal);
+}
+/* --- Tool call: Search --- */
+.tool-call-search {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--clr-var-text-80);
+    font-weight: var(--fw-light);
+    padding: 0;
+}
+.tool-call-search span {
+    font-size: var(--fs-mini) !important;
+    margin: 0 !important;
+    color: var(--clr-var-text-80);
+    font-weight: var(--fw-normal);
+
+    padding: 3px 7px;
+    border-radius: 8px;
+    width: fit-content;
+    background-color: var(--clr-var-light-background);
+    font-size: var(--fs-mini);
+}
+/* ==================================================================== */
+/*  Section: Artifact pane styling                                      */
+/*  Purpose: Styles: */
+/*      - Artifact buttons */
+/*      - Artifact window sizing */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+/* --- Artifact buttons --- */
+.artifact-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 5px;
+    padding: 3px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: var(--clr-var-light-background);
+    border: 1px solid var(--clr-var-prompt-button-outline);
+    width: fit-content;
+}
+.artifact-button span {
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-normal);
+    color: var(--clr-var-text-80);
+}
+.artifact-button img {
+    height: 1rem;
+}
+.artifact-button-final-message {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 8px;
+    padding: 3px 5px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: var(--clr-var-light-background);
+    border: 1px solid var(--clr-var-prompt-button-outline);
+    width: -webkit-fill-available;
+}
+.artifact-button-final-message span {
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-normal);
+    color: var(--clr-var-text-80);
+}
+.artifact-button-final-message img {
+    height: 30px;
+    width: auto;
+}
+.artifact-button-final-message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+span.artifact-button-final-message-title {
+    font-size: var(--fs-code);
+    font-weight: var(--fw-normal);
+    color: var(--clr-var-text-80);
+    text-align: left;
+}
+span.artifact-button-final-message-description {
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-light);
+    color: var(--clr-var-text-40);
+    text-align: left;
+}
+/* --- Artifact Pane - container sizing --- */
+.artifact-pane.open + .react-chat-container {
+    width: 60% !important;
+    max-width: 55rem;
+}
+.artifact-pane.open.zoomed + .react-chat-container {
+    width: auto !important;
+    max-width: 55rem;
+}
+.chat-and-artifact-container {
+    display: flex; 
+    flex-direction: row-reverse; 
+    height: 100%;
+    justify-content: space-between;
+}
+.artifact-pane {
+    display: none;
+
+    height: calc(100% - 2rem);
+    border-top: 1px solid var(--clr-var-prompt-button-outline);
+    border-left: none;
+    /* border-radius: 10px; */
+    background: var(--clr-var-primary-background);
+    margin: 0px;
+    /* max-width: 80rem; */
+
+    container-type: inline-size;
+    container-name: artifact-pane;
+}
+.artifact-pane.open {
+    transition: width 0.2s ease;
+
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.2s ease;
+    position: absolute;
+    bottom: 0px;
+    z-index: 15;
+    height: 90dvh; /* mobile view needs a small gap at the top */
+}
+.artifact-pane.open.zoomed {
+    width: 100%;
+}
+.artifact-pane-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+    flex-direction: column-reverse;
+}
+.artifact-pane-header .left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 8px;
+    padding: 3px 10px;
+}
+.artifact-pane-header .left img {
+    height: 1.2rem;
+    margin: 2px 0px 0px 0px;
+    border: 1px solid var(--clr-var-prompt-button-outline);
+    border-radius: 50%;
+}
+.artifact-pane-header .right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 1rem;
+    padding: 5px;
+    width: calc(100% - 10px);
+    justify-content: flex-end;
+}
+@container artifact-pane (min-width: 380px) {
+    .artifact-pane-header {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .artifact-pane-header .right {
+        width: auto;
+        justify-content: flex-end;
+    }
+}
+.artifact-pane-body-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0px 0px 7px 7px;
+    display: flex;
+    flex-direction: column;
+}
+/* animation for the plotly graphs when artifact pane is resized */
+.plot-container * {
+    transition: width 0.2s ease-in-out;
+}
+iframe {
+	border: none;
+	border-radius: 0px 0px 7px 7px;
+}
+.artifact-pane-body-content-empty {
+    margin: 30px 10px;
+}
+.artifact-pane-body-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+body.artifact-body {
+	background: var(--clr-var-primary-background);
+    margin: 0;
+    padding: 0;
+	display: block;
+    color: var(--clr-var-text-80);
+}
+body.light-background {
+    background-color: var(--clr-var-light-background);
+}
+.artifact {
+    width: 100%;
+    flex-grow: 1; /* Allow artifact to grow and fill remaining space */
+    overflow: auto; /* Add scrolling if content exceeds available space */
+}
+
+h1.artifact-title {
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-normal);
+}
+.artifact-description {
+    padding: 10px 10px 0px 10px;
+    border-bottom: 1px solid var(--clr-var-prompt-button-outline);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.data-source-deleted-warning {
+    padding: 5px 10px 0px 10px;
+}
+.data-source-deleted-warning.dashboards {
+    padding: 5px 10px;
+}
+@container artifact-pane (max-width: 365px) {
+    .artifact-actions {
+        width: -webkit-fill-available !important;
+        justify-content: flex-end;
+    }
+    .artifact-description {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+.artifact-description p {
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-p);
+    font-weight: var(--fw-normal);
+}
+.toggle-full-description-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    column-gap: 5px;
+    transition: max-height 0.3s ease;
+}
+.toggle-full-description-container.expanded {
+    max-height: none;
+}
+.toggle-full-description-container p {
+    margin: 10px 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.toggle-full-description-container.expanded p {
+    display: block;
+    -webkit-line-clamp: unset;
+}
+
+.AP-toggle-content-container {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid var(--clr-var-prompt-button-outline);
+    border-radius: 11px;
+    position: relative;
+    overflow: hidden;
+    margin: 5px 0px 8px 0px;
+    padding: 2px;
+    background-color: var(--clr-var-secondary-background);
+}
+
+.AP-toggle-content-button {
+    padding: 3px 0px;
+    width: 65px;
+    color: var(--clr-var-text-40);
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-normal);
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.AP-toggle-content-button.active {
+    color: var(--clr-var-text);
+}
+
+.slider {
+    /* z-index: -10; */
+    position: absolute;
+    left: -1px;
+    height: calc(100% - 1px);
+    width: 65px;
+    border: 2px solid var(--clr-var-prompt-button-outline);
+    border-radius: 5px;
+    background-color: var(--clr-var-primary-background);
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+.AP-toggle-content-button:nth-child(2).active ~ .slider {
+    transform: translateX(67px);
+}
+
+.AP-toggle-content-button:nth-child(3).active ~ .slider {
+    transform: translateX(132px);
+}
+
+.AP-toggle-content-button:nth-child(4).active ~ .slider {
+    transform: translateX(198px);
+}
+
+.AP-chevron-button {
+    margin: 0px 5px 0px 0px;
+    transition: all 0.2s ease;
+    padding: 2px;
+    border-radius: 2px;
+    height: 20px;
+    width: 20px;
+}
+.AP-chevron-button.expand-margin {
+    margin: 10px 0px 0px 0px;
+}
+.AP-chevron-button:hover {
+    background-color: var(--clr-var-primary-background);
+}
+
+.AP-chevron-button img {
+    height: 15px;
+    transition: all 0.2s ease;
+}
+.details-shown .AP-chevron-button {
+    background-color: var(--clr-var-primary-background);
+}
+.details-shown .AP-chevron-button img {
+    transform: rotate(180deg);
+}
+.expanded .AP-chevron-button {
+    background-color: var(--clr-var-primary-background);
+}
+.expanded .AP-chevron-button img {
+    transform: rotate(180deg);
+}
+
+p.AP-label {
+    color: var(--clr-var-text-40);
+    font-size: var(--fs-mini);
+    font-weight: var(--fw-normal);
+    margin: 0px;
+}
+.artifact-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 5px 0;
+    width: auto;
+}
+
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 37px;
+    right: 0;
+    z-index: 10;
+    
+    display: flex;
+    flex-direction: column;
+    /* row-gap: 10px; */
+
+    background: var(--clr-var-light-background);
+    border-radius: 10px;
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-menu ul {
+    color: var(--clr-var-text);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu-item,
+button.dropdown-menu-item,
+a.dropdown-menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--clr-var-text-80);
+    padding: 12px 20px;
+    width: 320px;
+    border-radius: 10px;
+}
+.dropdown-menu-item.db-conflict-message {
+    flex-direction: column;
+}
+.dropdown-menu-item span {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;      /* Limit to 1 line */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;                    /* Take up available space */
+    text-align: left;
+}
+.dropdown-menu-item.centered {
+    justify-content: center;
+}
+button.dropdown-menu-item:hover,
+a.dropdown-menu-item:hover {
+    background-color: var(--clr-var-button-hover);
+}
+span.dropdown-header {
+    color: var(--clr-var-text-40);
+    text-align: center;
+}
+.dropdown-menu-item img {
+    height: 1.3rem;
+}
+
+.dropdown-menu-item.new-dashboard {
+    color: var(--primary-color);
+}
+
+.dropdown-menu hr {
+    margin: 0px 10px;
+    border: none;
+    border-top: 2px solid var(--clr-var-prompt-button-outline);
+}
+.dropdown-menu-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dropdown-menu-form input {
+    background-color: var(--clr-var-dark-background);
+    border: 1px solid var(--clr-var-text-input-outline);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--clr-var-text-80);
+    font-family: var(--font-family);
+    margin: 0px;
+    width: calc(100% - 2rem);
+    height: 1.5rem;
+    resize: none;
+}
+.dropdown-menu-form input::placeholder {
+    color: var(--clr-var-text-20);
+}
+.dropdown-menu-form input:focus {
+    outline: none;
+    text-decoration: none;
+}
+.remaining-rows-message {
+    margin: 0.3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+}
+.warning-message-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; 
+    width: 100%;
+    margin-top: 10px;
+}
+/* --------------- CODE WIDGET --------------- */
+.artifact-code-container {
+    background-color: var(--clr-var-code-block-background);
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+}
+#codeContent pre {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#codeContent pre code {
+    /* most code styling comes from highlight.js */
+    font-size: var(--fs-code);
+}
+
+.hidden-label {
+    display: none;
+}
+
+/* ---------------------------- ARTIFACT markdown styling ----------------------- */
+.artifact {
+    overflow: auto;
+}
+.artifact {
+    color: var(--clr-var-text-80);   
+}
+.artifact table {
+    border-spacing: 0px;
+    font-size: var(--fs-code);
+    transition: transform 0.2s ease;
+    border: none;
+}
+
+.artifact th, .artifact td {
+    border: 1px solid var(--clr-var-primary-background);
+    padding: 5px;
+    text-align: left;
+}
+.artifact th {
+    background-color: var(--clr-var-dark-background-20);
+    font-weight: var(--fw-semi);
+}
+.artifact td {
+    background-color: var(--clr-var-light-background);
+}
+
+/* --------------- IMAGE WIDGET --------------- */
+.image-widget img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    background-color: var(--clr-var-light-background);
+}
+
+/* ==================================================================== */
+/*  Section: Chat Markdown                                              */
+/*  Purpose: Formatting of the assistants output messages               */
+/*                                                                      */
+/*  Selectors:                                                          */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Depends on variables:                                               */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Breakpoints / containers:                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  JS hooks:                                                           */
+/*    [To be filled out]                                                */
+/*                                                                      */
+/*  Last updated: 2025-06-13 – @illianaa                                */
+/* ==================================================================== */
+
+.chat-container h1 {
+    font-size: var(--fs-h1);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+}
+.chat-container h2 {
+    font-size: var(--fs-h2);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+}
+.chat-container h3 {
+    font-size: var(--fs-h3);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+}
+.chat-container h4 {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+}
+.chat-container h5 {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-40);
+    margin: 15px 0px;
+}
+.chat-container h6 {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-40);
+    margin: 15px 0px;
+}
+.chat-container p {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+    line-height: 1.6;
+
+}
+.chat-container a {
+    font-size: var(--fs-p);
+    font-weight: var(--fw-semi);
+    color: var(--clr-var-link);
+    margin: 15px 0px;
+}
+.chat-container ol {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+    width: calc(100% - 2.2rem);
+    padding-inline-start: 25px;
+}
+@supports (-webkit-hyphens:none) {
+    .chat-container ol {
+        padding-inline-start: 35px; /* Increase padding for Safari */
+        width: calc(100% - 2rem);
+    }
+}
+.chat-container ul {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 0px;
+    width: calc(100% - 2.2rem);
+}
+.chat-container li {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+    line-height: 1.6;
+    max-width: 99%;
+    overflow-wrap: break-word;
+}
+.chat-container blockquote {
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+    margin: 15px 0px;
+    padding: 2px 0px 2px 10px;
+    border-left: 4px solid var(--clr-var-light-background);
+    border-radius: 2px;
+}
+.chat-container hr {
+    margin: 20px 5px;
+    border-radius: 5px;
+    border: 2px solid var(--clr-var-light-background-20);
+    width: 100%;
+}
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+.chat-container table {
+    width: max-content;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: var(--fs-p);
+    color: var(--clr-var-text-80);
+}
+.chat-container th, .chat-container td {
+    border: 1px solid var(--clr-var-primary-background);
+    padding: 10px;
+    text-align: left;
+}
+.chat-container th {
+    background-color: var(--clr-var-light-background-20);
+    font-weight: var(--fw-semi);
+}
+.chat-container td {
+    background-color: var(--clr-var-light-background);
+}
+/* for inline code */
+.chat-container code {
+    color: var(--clr-var-code-font);
+    font-size: var(--fs-code);
+    background-color: var(--clr-var-code-block-background);
+    border-radius: 5px;
+    
+    padding: 4px 7px; 
+    margin: 0;
+    width: calc(100% - 1.2rem);
+}
+/* code block + the copy button in top right corner */
+.code-block {
+    background-color: var(--clr-var-code-block-background);
+    border-radius: 5px;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 98dvw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+}
+.code-block code::selection {
+    background: transparent;
+}
+.code-block code::-moz-selection {
+    background: transparent;
+}
+.code-block code:focus {
+    outline: none;
+}
+.code-block-top-bar {
+    background-color: var(--clr-var-code-block-top-bar-background);
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    padding: 5px 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.code-block-content {
+    padding-top: 2rem;
+    width: 100%;
+}
+.code-block pre {
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    width: calc(100% - 1rem);
+}
+.code-block code {
+    display: inline-block;
+    padding: 0.6rem;
+    font-size: var(--fs-code);
+    line-height: 1.5;
+    white-space: pre;
+    word-wrap: normal;
+    overflow-x: auto;
+}
+.code-block-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 5px;
+}
+.code-block-top-bar img{
+    height: var(--fs-p)
+}
+.copy-message {
+    color: var(--clr-var-text-80);
+    font-size: var(--fs-mini);
+    margin-right: 8px;
+}
+/* scroll for math */
+p.katex-block { 
+    width: calc(100% - 2rem);
+    overflow: auto;
+    background: var(--clr-var-math-block-background);
+    border-radius: 5px;
+    padding: .4rem 1rem;  
+}
+/* ------------------------------------------ RESPONSIVE Styling --------------------------------------------------- */
+
+/* wherever dvh isn't supported */
+@supports not (height: 100dvh) {
+    .chat-container {
+        height: calc(100vh - 8.2rem);
+    }
+}
+@supports not (height: 92dvh) {
+    .artifact-pane.open {
+        /* height: calc(100vh - 8.2rem); */
+        height: 100vh;
+    }
+}
+/* smallest phone */
+
+@media (min-width: 580px) {
+    /* ---------------------------- Code blocks ----------------------- */
+    /* .code-block {
+        width: calc(100% - 1.2rem);
+    } */
+    .chat-container ol {
+        padding-inline-start: 30px;
+    }
+}
+/* styles for tablet */
+@media (min-width: 768px) {
+    /* ---------------------------- Chat ----------------------- */
+    .chat-container {
+        width: calc(100% - 2rem);
+    }
+    /* ---------------------------- Chat start screen ----------------------- */
+    .chat-recommendations-list.empty-chat,
+    .chat-recommendations.empty-chat h3 {
+        width: 100%;
+    }
+}
+
+/* min is 820 bc AP needs to be at least 320px in the smallest size */
+@media (min-width: 820px) {
+    /* ---------------------------- Artifact pane ----------------------- */
+    .artifact-pane.open {
+        position: static;
+        z-index: auto;
+        width: 40%;
+        height: 100dvh;
+    }
+    .artifact-pane {
+        margin: 0px 0px 0px 10px;
+        border-top: none;
+        border-left: 1px solid var(--clr-var-prompt-button-outline);
+    }
+    .mobile-hidden {
+        display: block;
+    }
+    .artifact-pane.open.zoomed + .react-chat-container {
+        width: 30% !important;
+    }
+    .artifact-pane.open.zoomed {
+        width: 70%;
+    }
+}
+
+/* styles for xl desktop */
+@media (min-width: 1330px) {
+    .artifact-pane.open + .react-chat-container {
+        width: --webkit-fill-available;
+        max-width: none;
+    }
+}
+
