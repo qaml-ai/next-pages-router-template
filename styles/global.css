@@ -31,10 +31,10 @@
     --clr-var-code-block-top-bar-background: #e4eaf0;
 
     /* text */
-    --clr-var-text: #000000d1;
-    --clr-var-text-80: #000000b2;
-    --clr-var-text-40: #00000081;
-    --clr-var-text-20: #00000030;
+    --clr-var-text-primary: #000000b2;
+    --clr-var-text-highlight: #000000d1;
+    --clr-var-text-faded: #00000081;
+    --clr-var-text-placeholder: #00000030;
     --clr-var-code-font: #262734;
     --clr-var-link: #0066ff;
 
@@ -48,6 +48,8 @@
     --clr-var-text-input-outline: #bebebe;
     --clr-var-prompt-button-outline: #CED5E1;
     --clr-var-button-hover: #0000000e;
+    --clr-var-scroll-bar: #00000081;
+    --clr-var-loading-lines: #00000081;
 
     /* loading spinner */
     --clr-var-spinner-1: #383838;
@@ -75,10 +77,10 @@
         --clr-var-code-block-top-bar-background: #20252C;
 
         /* text */
-        --clr-var-text: #ffffff;
-        --clr-var-text-80: #ffffffc6;
-        --clr-var-text-40: #ffffff73;
-        --clr-var-text-20: #ffffff31;
+        --clr-var-text-primary: #ffffffc6;
+        --clr-var-text-highlight: #ffffff;
+        --clr-var-text-faded: #ffffff73;
+        --clr-var-text-placeholder: #ffffff31;
         --clr-var-code-font: #daddf3;
         --clr-var-link: #4F94FF;
 
@@ -93,6 +95,8 @@
         --clr-var-prompt-button-outline: #30353B;
         --clr-var-hr: #ffffff0e;
         --clr-var-button-hover: #ffffff0e;
+        --clr-var-scroll-bar: #ffffff73;
+        --clr-var-loading-lines: #ffffff73;
 
         /* loading spinner */
         --clr-var-spinner-1: #ffffff;
@@ -143,7 +147,7 @@ body {
 /* Scrollbar styling */
 * {
     scrollbar-width: thin;  /* For Firefox */
-    scrollbar-color: var(--clr-var-text-40) transparent;  /* For Firefox */
+    scrollbar-color: var(--clr-var-scroll-bar) transparent;  /* For Firefox */
 }
 /* For Chrome, Safari */
 ::-webkit-scrollbar {
@@ -154,12 +158,12 @@ body {
     background: transparent;  /* Color of the tracking area */
 }
 ::-webkit-scrollbar-thumb {
-    background-color: var(--clr-var-text-40);  /* Color of the scroll thumb */
+    background-color: var(--clr-var-scroll-bar);  /* Color of the scroll thumb */
     border-radius: 4px;  /* Rounded corners of the scroll thumb */
     border: 2px solid var(--clr-var-dark-background-20);  
 }
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--clr-var-text-80);  /* Color of the scroll thumb on hover */
+    background-color: var(--clr-var-text-primary);  /* Color of the scroll thumb on hover */
 }
 /* remove all default styling from buttons */
 button {
@@ -254,7 +258,7 @@ button {
     z-index: 20;
 
     background-color: var(--clr-var-dark-background);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     padding: 5px 10px;
     border-radius: 4px;
     font-size: var(--fs-code);
@@ -443,8 +447,8 @@ span.chat-error-message {
     height: 15px;
     border: 1px solid transparent;
     border-radius: 50%;
-    border-top: 3px solid var(--clr-var-text);
-    border-left: 3px solid var(--clr-var-text);
+    border-top: 3px solid var(--clr-var-text-highlight);
+    border-left: 3px solid var(--clr-var-text-highlight);
     animation: spin 1.5s linear infinite, colorChange 8s ease-in-out infinite;
     margin: 0 10px;
 }
@@ -569,7 +573,7 @@ span.chat-error-message {
 .chat-input-editable {
     font-size: var(--fs-p);
     font-weight: var(--fw-light);
-    color: var(--clr-var-text);
+    color: var(--clr-var-text-highlight);
     background-color: transparent;
 
     min-height: 24px;
@@ -589,7 +593,7 @@ span.chat-error-message {
 }
 .chat-input-editable[data-placeholder]:empty:before {
     content: attr(data-placeholder);
-    color: var(--clr-var-text-20);
+    color: var(--clr-var-text-placeholder);
 }
 .chat-input-bottom-row {
     display: flex;
@@ -661,7 +665,7 @@ img.chat-ds-tag-icon {
 .chat-selected-ds-tag span,
 .chat-ds-select-menu-item span {
     font-size: var(--fs-code);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     flex: 1;
     text-align: left;
     white-space: nowrap;
@@ -675,7 +679,7 @@ img.chat-ds-tag-icon {
     border-radius: 8px;
 }
 .chat-selected-ds-tag.empty span {
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
 }
 .chat-ds-select-menu {
     display: flex;
@@ -737,7 +741,7 @@ button.chat-ds-select-menu-item:hover {
     gap: 5px;
 }
 .active-model span {
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     white-space: nowrap;
 }
@@ -773,16 +777,16 @@ button.model-switcher-menu-item:hover {
     background-color: var(--clr-var-dark-background);
 }
 span.model-name {
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-code);
     padding: 5px 0;
 }
 span.model-description {
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     font-size: var(--fs-mini);
 }
 span.new-chat-label {
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     font-size: var(--fs-mini);
     border-radius: 8px;
     background-color: var(--clr-var-dark-background);
@@ -827,7 +831,7 @@ span.new-chat-label {
 }
 .chat-recommendations.empty-chat h3 {
     width: calc(100% - 2rem);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
 }
 .chat-recommendations-list {
     width: 100%;
@@ -846,7 +850,7 @@ span.new-chat-label {
 }
 .chat-recommendation-button {
     padding: 5px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     border: 2px solid var(--clr-var-prompt-button-outline);
     border-radius: 10px;
     text-align: left;
@@ -903,7 +907,7 @@ span.new-chat-label {
     content: "";
     height: 8px;
     border-radius: 4px;
-    background: var(--clr-var-text-40);
+    background: var(--clr-var-loading-lines);
     animation: loadingLines 2s ease-in-out infinite;
 }
 .loading-lines::before {
@@ -972,7 +976,7 @@ span.new-chat-label {
     flex: 1;
     font-size: var(--fs-p);
     font-weight: var(--fw-light);
-    color: var(--clr-var-text);
+    color: var(--clr-var-text-highlight);
     background-color: var(--clr-var-dark-background-20);
     border: none;
     border-radius: 5px;
@@ -1046,7 +1050,7 @@ span.new-chat-label {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     font-weight: var(--fw-semi);
 }
@@ -1086,7 +1090,7 @@ span.new-chat-label {
     margin: 0px;
     padding: 10px;
     border-radius: 10px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     max-height: 500px;
 }
@@ -1125,7 +1129,7 @@ img.tool-call-logo.rounded {
     align-items: center;
     gap: 8px;
     font-size: var(--fs-mini);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     padding: 0 0 5px 0;
 }
 /* this targets all siblings of the header, including the artifacts of the tool call which I could not target otherwise */
@@ -1144,13 +1148,13 @@ img.tool-call-logo.rounded {
     display: flex;
     flex-direction: column;
     row-gap: 8px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-weight: var(--fw-light);
 }
 .tool-call-ec-section p {
     font-size: var(--fs-mini) !important;
     margin: 0 !important;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-weight: var(--fw-normal);
 }
 .code-block code.tool-call-code{
@@ -1195,7 +1199,7 @@ img.tool-call-logo.rounded {
 .tool-call-planning ol  {
     font-size: var(--fs-mini) !important;
     margin: 10px 0 !important;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-weight: var(--fw-normal);
 }
 /* --- Tool call: Search --- */
@@ -1204,14 +1208,14 @@ img.tool-call-logo.rounded {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-weight: var(--fw-light);
     padding: 0;
 }
 .tool-call-search span {
     font-size: var(--fs-mini) !important;
     margin: 0 !important;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-weight: var(--fw-normal);
 
     padding: 3px 7px;
@@ -1256,7 +1260,7 @@ img.tool-call-logo.rounded {
 .artifact-button span {
     font-size: var(--fs-mini);
     font-weight: var(--fw-normal);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
 }
 .artifact-button img {
     height: 1rem;
@@ -1277,7 +1281,7 @@ img.tool-call-logo.rounded {
 .artifact-button-final-message span {
     font-size: var(--fs-mini);
     font-weight: var(--fw-normal);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
 }
 .artifact-button-final-message img {
     height: 30px;
@@ -1291,13 +1295,13 @@ img.tool-call-logo.rounded {
 span.artifact-button-final-message-title {
     font-size: var(--fs-code);
     font-weight: var(--fw-normal);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     text-align: left;
 }
 span.artifact-button-final-message-description {
     font-size: var(--fs-mini);
     font-weight: var(--fw-light);
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     text-align: left;
 }
 /* --- Artifact Pane - container sizing --- */
@@ -1415,7 +1419,7 @@ body.artifact-body {
     margin: 0;
     padding: 0;
 	display: block;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
 }
 body.light-background {
     background-color: var(--clr-var-light-background);
@@ -1427,7 +1431,7 @@ body.light-background {
 }
 
 h1.artifact-title {
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     font-weight: var(--fw-normal);
 }
@@ -1457,7 +1461,7 @@ h1.artifact-title {
     }
 }
 .artifact-description p {
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-p);
     font-weight: var(--fw-normal);
 }
@@ -1502,7 +1506,7 @@ h1.artifact-title {
 .AP-toggle-content-button {
     padding: 3px 0px;
     width: 65px;
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     font-size: var(--fs-mini);
     font-weight: var(--fw-normal);
     position: relative;
@@ -1514,7 +1518,7 @@ h1.artifact-title {
 }
 
 .AP-toggle-content-button.active {
-    color: var(--clr-var-text);
+    color: var(--clr-var-text-highlight);
 }
 
 .slider {
@@ -1576,7 +1580,7 @@ h1.artifact-title {
 }
 
 p.AP-label {
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     font-size: var(--fs-mini);
     font-weight: var(--fw-normal);
     margin: 0px;
@@ -1609,7 +1613,7 @@ p.AP-label {
 }
 
 .dropdown-menu ul {
-    color: var(--clr-var-text);
+    color: var(--clr-var-text-highlight);
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -1622,7 +1626,7 @@ a.dropdown-menu-item {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     padding: 12px 20px;
     width: 320px;
     border-radius: 10px;
@@ -1647,7 +1651,7 @@ a.dropdown-menu-item:hover {
     background-color: var(--clr-var-button-hover);
 }
 span.dropdown-header {
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     text-align: center;
 }
 .dropdown-menu-item img {
@@ -1673,7 +1677,7 @@ span.dropdown-header {
     border: 1px solid var(--clr-var-text-input-outline);
     border-radius: 8px;
     padding: 10px;
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-family: var(--font-family);
     margin: 0px;
     width: calc(100% - 2rem);
@@ -1681,7 +1685,7 @@ span.dropdown-header {
     resize: none;
 }
 .dropdown-menu-form input::placeholder {
-    color: var(--clr-var-text-20);
+    color: var(--clr-var-text-placeholder);
 }
 .dropdown-menu-form input:focus {
     outline: none;
@@ -1728,7 +1732,7 @@ span.dropdown-header {
     overflow: auto;
 }
 .artifact {
-    color: var(--clr-var-text-80);   
+    color: var(--clr-var-text-primary);   
 }
 .artifact table {
     border-spacing: 0px;
@@ -1779,37 +1783,37 @@ span.dropdown-header {
 
 .chat-container h1 {
     font-size: var(--fs-h1);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
 }
 .chat-container h2 {
     font-size: var(--fs-h2);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
 }
 .chat-container h3 {
     font-size: var(--fs-h3);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
 }
 .chat-container h4 {
     font-size: var(--fs-h4);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
 }
 .chat-container h5 {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     margin: 15px 0px;
 }
 .chat-container h6 {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-40);
+    color: var(--clr-var-text-faded);
     margin: 15px 0px;
 }
 .chat-container p {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
     line-height: 1.6;
 
@@ -1822,7 +1826,7 @@ span.dropdown-header {
 }
 .chat-container ol {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
     width: calc(100% - 2.2rem);
     padding-inline-start: 25px;
@@ -1835,13 +1839,13 @@ span.dropdown-header {
 }
 .chat-container ul {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 0px;
     width: calc(100% - 2.2rem);
 }
 .chat-container li {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
     line-height: 1.6;
     max-width: 99%;
@@ -1849,7 +1853,7 @@ span.dropdown-header {
 }
 .chat-container blockquote {
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     margin: 15px 0px;
     padding: 2px 0px 2px 10px;
     border-left: 4px solid var(--clr-var-light-background);
@@ -1870,7 +1874,7 @@ span.dropdown-header {
     border-collapse: collapse;
     margin: 15px 0;
     font-size: var(--fs-p);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
 }
 .chat-container th, .chat-container td {
     border: 1px solid var(--clr-var-primary-background);
@@ -1918,7 +1922,7 @@ span.dropdown-header {
 }
 .code-block-top-bar {
     background-color: var(--clr-var-code-block-top-bar-background);
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     padding: 5px 1rem;
     display: flex;
@@ -1954,7 +1958,7 @@ span.dropdown-header {
     height: var(--fs-p)
 }
 .copy-message {
-    color: var(--clr-var-text-80);
+    color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
     margin-right: 8px;
 }
