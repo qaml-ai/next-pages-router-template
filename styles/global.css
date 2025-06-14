@@ -15,8 +15,9 @@
     --fw-semi: 500;
     --fw-bold: 600;
 
-    /* font family for text (monospace default used for code) */
+    /* font family for text */
     --font-family: -apple-system, BlinkMacSystemFont,"Segoe UI","Roboto","Helvetica Neue","Ubuntu";
+    /* monospace default font used for code blocks */
 
     /* Color variables */
     --clr-white: #ffffff;
@@ -188,6 +189,8 @@
 /* ==================================================================== */
 /*  Section: Misc styling                                               */
 /*  Purpose: Styles used in multiple app components:                    */
+/*      - Body */
+/*      - Scrollbar */
 /*      - Heroicons */
 /*      - Icon-buttons + on hover tooltip styling */
 /*      - Warning message*/
@@ -207,6 +210,49 @@
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
+/* Setting default styling */
+html {
+	font-family: var(--font-family);
+	-webkit-appearance: none;
+	overflow-x: hidden;  
+}
+body {
+	background: var(--clr-var-primary-background);
+    margin: 0;
+    padding: 0;
+	display: block;
+}
+/* Scrollbar styling */
+* {
+    scrollbar-width: thin;  /* For Firefox */
+    scrollbar-color: var(--clr-var-text-40) transparent;  /* For Firefox */
+}
+/* For Chrome, Safari */
+::-webkit-scrollbar {
+    width: 4px;  /* Width of vertical scrollbar */
+    height: 4px;  /* Height of horizontal scrollbar */
+}
+::-webkit-scrollbar-track {
+    background: transparent;  /* Color of the tracking area */
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--clr-var-text-40);  /* Color of the scroll thumb */
+    border-radius: 4px;  /* Rounded corners of the scroll thumb */
+    border: 2px solid var(--clr-var-dark-background-20);  
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--clr-var-text-80);  /* Color of the scroll thumb on hover */
+}
+/* remove all default styling from buttons */
+button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
 /* --- Heroicon --- */
 .heroicon {
     width: 16px;
