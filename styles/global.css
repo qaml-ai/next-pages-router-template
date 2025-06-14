@@ -1,5 +1,4 @@
 :root {
-
     /* font sizes */
     --fs-h1: 1.3rem;
     --fs-h2: 1.1rem;
@@ -17,173 +16,92 @@
 
     /* font family for text */
     --font-family: -apple-system, BlinkMacSystemFont,"Segoe UI","Roboto","Helvetica Neue","Ubuntu";
-    /* monospace default font used for code blocks */
 
-    /* Color variables */
-    --clr-white: #ffffff;
-    --clr-white-80: #ffffffc6;
-    --clr-white-40: #ffffff73;
-    --clr-white-20: #ffffff31;
-    --clr-white-10: #ffffff0e;
-
-    --clr-black: #000000;
-    --clr-black-80: #000000b2;
-    --clr-black-70: #0000009b;
-    --clr-black-40: #00000081;
-    --clr-black-30: #0000003b;
-    --clr-black-20: #00000030;
-    --clr-black-10: #0000000e;
-
-    /* darkmode colors */
-    --clr-red: #ff3224;
-    --clr-red-sheer: #fe11001e;
-    --clr-yellow: #EDAF5E;
-    --clr-yellow-sheer: #edaf5e26;
-    --clr-blue: #8EBFFF;
-    --clr-blue-sheer: #8ebfff20;
-    --clr-green: #85c0a3;
-
-    --clr-dark-background: #0C0F12;
-    --clr-dark-background-40: #0c0f126b;
-    --clr-dark-background-20: #0c0f1227;
-    --clr-medium-background: #13181F;
-    --clr-light-background: #20252C;
-    --clr-light-background-40: #20252c6c;
-    --clr-light-background-20: #20252ca1;
-
-	--clr-text-input-outline: #30353B;
-    --clr-pb-img-border: #b6bdc56e;
-    --clr-code-block-top-bar: #20252C;
-
-	--clr-code-font: #daddf3;
-	--clr-link: #4F94FF;
-
-    --clr-spinner-1: #ffffff;
-    --clr-spinner-2: #aef8ff;
-    --clr-spinner-3: #a8beff;
-    --clr-spinner-4: #ffcfa5;
-    --clr-spinner-5: #ffb0aa;
-    --clr-spinner-6: #f0a2ff;
-    --clr-spinner-7: #ff98f8;
-
-    /* lightmode colors */
-    --clrlight-black: #000000d1;
-    --clrlight-red: #cf4a4a;
-    --clrlight-red-sheer: #f66e6e20;
-    --clrlight-yellow: #7f4b07;
-    --clrlight-yellow-sheer: #edaf5e42;
-    --clrlight-blue: #1f3858;
-    --clrlight-blue-sheer: #1f38581f;
-    --clrlight-green: #82a493;
-
-    --clrlight-prompt-button-outline: #CED5E1;
-    --clrlight-dark-background: #DAE1ED;
-    --clrlight-dark-background-20: #ced5e122;
-    --clrlight-medium-background: #F1F3F7;
-    --clrlight-light-background: #F9FCFF;
-    --clrlight-light-background-40: #f9fcff54;
-    --clrlight-light-background-20: #ffffff31;
-
-	--clrlight-text-input-outline: #bebebe;
-    --clrlight-pb-img-border: #84848459;
-    --clrlight-code-block-top-bar: #e4eaf0;
-
-	--clrlight-code-font: #262734;
-	--clrlight-link: #0066ff;
-
-    --clrlight-spinner-1: #383838;
-    --clrlight-spinner-2: #4D7FFF;
-    --clrlight-spinner-3: #00E5FF;
-    --clrlight-spinner-4: #FFA500;
-    --clrlight-spinner-5: #FF5555;
-    --clrlight-spinner-6: #FF00E5;
-    --clrlight-spinner-7: #B300FF;
-
-    /* Color Variables used throughout the code */
-    /* Lightmode configuration */
-
+    /* Light mode color variables (default) */
+    
     /* backgrounds */
-    --clr-var-primary-background: var(--clrlight-medium-background);
-    --clr-var-light-background: var(--clrlight-light-background);
-    --clr-var-light-background-20: var(--clrlight-light-background-20);
-    --clr-var-dark-background: var(--clrlight-dark-background);
-    --clr-var-dark-background-40: var(--clrlight-dark-background-40);
-    --clr-var-dark-background-20: var(--clrlight-dark-background-20);
-    --clr-var-code-block-background: var(--clr-white);
-    --clr-var-math-block-background: var(--clr-white);
-    --clr-var-code-block-top-bar-background: var(--clrlight-code-block-top-bar);
+    --clr-var-primary-background: #F1F3F7;
+    --clr-var-light-background: #F9FCFF;
+    --clr-var-light-background-20: #ffffff31;
+    --clr-var-dark-background: #DAE1ED;
+    --clr-var-dark-background-40: #DAE1ED;
+    --clr-var-dark-background-20: #ced5e122;
+    --clr-var-code-block-background: #ffffff;
+    --clr-var-math-block-background: #ffffff;
+    --clr-var-code-block-top-bar-background: #e4eaf0;
 
     /* text */
-    --clr-var-text: var(--clrlight-black);
-    --clr-var-text-80: var(--clr-black-80);
-    --clr-var-text-40: var(--clr-black-40);
-    --clr-var-text-20: var(--clr-black-20);
-    --clr-var-code-font: var(--clrlight-code-font);
-    --clr-var-link: var(--clrlight-link);
+    --clr-var-text: #000000d1;
+    --clr-var-text-80: #000000b2;
+    --clr-var-text-40: #00000081;
+    --clr-var-text-20: #00000030;
+    --clr-var-code-font: #262734;
+    --clr-var-link: #0066ff;
 
     /* warnings and alerts */
-    --clr-var-red-alert: var(--clrlight-red);
-    --clr-var-red-sheer: var(--clrlight-red-sheer);
-    --clr-var-yellow-warning: var(--clrlight-yellow);
-    --clr-var-yellow-sheer: var(--clrlight-yellow-sheer);
+    --clr-var-red-alert: #cf4a4a;
+    --clr-var-red-sheer: #f66e6e20;
+    --clr-var-yellow-warning: #7f4b07;
+    --clr-var-yellow-sheer: #edaf5e42;
     
     /* misc */
-    --clr-var-text-input-outline: var(--clrlight-text-input-outline);
-    --clr-var-prompt-button-outline: var(--clrlight-prompt-button-outline);
-    --clr-var-button-hover: var(--clr-black-10);
+    --clr-var-text-input-outline: #bebebe;
+    --clr-var-prompt-button-outline: #CED5E1;
+    --clr-var-button-hover: #0000000e;
 
     /* loading spinner */
-    --clr-var-spinner-1: var(--clrlight-spinner-1);
-    --clr-var-spinner-2: var(--clrlight-spinner-2);
-    --clr-var-spinner-3: var(--clrlight-spinner-3);
-    --clr-var-spinner-4: var(--clrlight-spinner-4);
-    --clr-var-spinner-5: var(--clrlight-spinner-5);
-    --clr-var-spinner-6: var(--clrlight-spinner-6);
-    --clr-var-spinner-7: var(--clrlight-spinner-7);
+    --clr-var-spinner-1: #383838;
+    --clr-var-spinner-2: #4D7FFF;
+    --clr-var-spinner-3: #00E5FF;
+    --clr-var-spinner-4: #FFA500;
+    --clr-var-spinner-5: #FF5555;
+    --clr-var-spinner-6: #FF00E5;
+    --clr-var-spinner-7: #B300FF;
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
-        /* Darkmode configuration */
+        /* Dark mode color variables */
 
         /* backgrounds */
-        --clr-var-primary-background: var(--clr-medium-background);
-        --clr-var-light-background: var(--clr-light-background);
-        --clr-var-light-background-20: var(--clr-light-background-20);
-        --clr-var-dark-background: var(--clr-dark-background);
-        --clr-var-dark-background-40: var(--clr-dark-background-40);
-        --clr-var-dark-background-20: var(--clr-dark-background-20);
-        --clr-var-code-block-background: var(--clr-black);
-        --clr-var-math-block-background: var(--clr-light-background-20);
-        --clr-var-code-block-top-bar-background: var(--clr-code-block-top-bar);
+        --clr-var-primary-background: #13181F;
+        --clr-var-light-background: #20252C;
+        --clr-var-light-background-20: #20252ca1;
+        --clr-var-dark-background: #0C0F12;
+        --clr-var-dark-background-40: #0c0f126b;
+        --clr-var-dark-background-20: #0c0f1227;
+        --clr-var-code-block-background: #000000;
+        --clr-var-math-block-background: #20252ca1;
+        --clr-var-code-block-top-bar-background: #20252C;
 
         /* text */
-        --clr-var-text: var(--clr-white);
-        --clr-var-text-80: var(--clr-white-80);
-        --clr-var-text-40: var(--clr-white-40);
-        --clr-var-text-20: var(--clr-white-20);
-        --clr-var-code-font: var(--clr-code-font);
-        --clr-var-link: var(--clr-link);
+        --clr-var-text: #ffffff;
+        --clr-var-text-80: #ffffffc6;
+        --clr-var-text-40: #ffffff73;
+        --clr-var-text-20: #ffffff31;
+        --clr-var-code-font: #daddf3;
+        --clr-var-link: #4F94FF;
 
         /* warnings and alerts */
-        --clr-var-red-alert: var(--clr-red);
-        --clr-var-red-sheer: var(--clr-red-sheer);
-        --clr-var-yellow-warning: var(--clr-yellow);
-        --clr-var-yellow-sheer: var(--clr-yellow-sheer);
+        --clr-var-red-alert: #ff3224;
+        --clr-var-red-sheer: #fe11001e;
+        --clr-var-yellow-warning: #EDAF5E;
+        --clr-var-yellow-sheer: #edaf5e26;
 
         /* misc */
-        --clr-var-text-input-outline: var(--clr-text-input-outline);
-        --clr-var-prompt-button-outline: var(--clr-text-input-outline);
-        --clr-var-hr: var(--clr-white-10);
-        --clr-var-button-hover: var(--clr-white-10);
+        --clr-var-text-input-outline: #30353B;
+        --clr-var-prompt-button-outline: #30353B;
+        --clr-var-hr: #ffffff0e;
+        --clr-var-button-hover: #ffffff0e;
 
         /* loading spinner */
-        --clr-var-spinner-1: var(--clr-spinner-1);
-        --clr-var-spinner-2: var(--clr-spinner-2);
-        --clr-var-spinner-3: var(--clr-spinner-3);
-        --clr-var-spinner-4: var(--clr-spinner-4);
-        --clr-var-spinner-5: var(--clr-spinner-5);
-        --clr-var-spinner-6: var(--clr-spinner-6);
-        --clr-var-spinner-7: var(--clr-spinner-7);
+        --clr-var-spinner-1: #ffffff;
+        --clr-var-spinner-2: #aef8ff;
+        --clr-var-spinner-3: #a8beff;
+        --clr-var-spinner-4: #ffcfa5;
+        --clr-var-spinner-5: #ffb0aa;
+        --clr-var-spinner-6: #f0a2ff;
+        --clr-var-spinner-7: #ff98f8;
     }
 }
 /* ==================================================================== */
@@ -1875,7 +1793,7 @@ span.dropdown-header {
     margin: 15px 0px;
 }
 .chat-container h4 {
-    font-size: var(--fs-p);
+    font-size: var(--fs-h4);
     color: var(--clr-var-text-80);
     margin: 15px 0px;
 }
@@ -2118,4 +2036,3 @@ p.katex-block {
         max-width: none;
     }
 }
-
