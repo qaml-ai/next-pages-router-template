@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next'
-import ChatPage from '../components/ChatPage'
+import App from '../components/chat/App'
 
 interface IndexProps {
   initialMessages: any[]
@@ -7,6 +7,8 @@ interface IndexProps {
   connectedApps: any[]
   threadData: any
   modelOverride: string | null
+  selectedDataSource: any
+  userData: any
 }
 
 export default function Index({
@@ -15,14 +17,18 @@ export default function Index({
   connectedApps,
   threadData,
   modelOverride,
+  selectedDataSource,
+  userData,
 }: IndexProps) {
   return (
-    <ChatPage
+    <App
       initialMessages={initialMessages}
       availableModels={availableModels}
       connectedApps={connectedApps}
       threadData={threadData}
       modelOverride={modelOverride}
+      selectedDataSource={selectedDataSource}
+      userData={userData}
     />
   )
 }
@@ -43,7 +49,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, 
     'gpt-3.5-turbo': { name: 'GPT-3.5 Turbo', description: 'Fast and efficient' }
   }
   
-  const connectedApps = []
+  const connectedApps: any[] = []
   
   const threadData = {
     thread_id: null,
@@ -52,8 +58,24 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, 
   }
   
   const modelOverride = typeof query.modelOverride === 'string' ? query.modelOverride : null
+  
+  const selectedDataSource = null
+  
+  const userData = {
+    id: null,
+    name: 'Anonymous User',
+    email: null
+  }
 
   return {
-    props: { initialMessages, availableModels, connectedApps, threadData, modelOverride },
+    props: { 
+      initialMessages, 
+      availableModels, 
+      connectedApps, 
+      threadData, 
+      modelOverride, 
+      selectedDataSource, 
+      userData 
+    },
   }
 }
