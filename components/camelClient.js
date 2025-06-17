@@ -18,19 +18,65 @@ export class CamelClient {
       this.getAccessToken = () => accessTokenOrGetAccessToken;
     }
     this.baseUrl = baseUrl;
+    
+    // Token caching
+    this._cachedToken = null;
+    this._tokenPromise = null;
   }
 
   /** Update the JWT access token used for authentication. */
   setAccessToken(token) {
     this.getAccessToken = () => token;
+    this._cachedToken = token; // Update cache
+    this._tokenPromise = null; // Clear any pending promise
+  }
+
+  /** Clear the cached token, forcing a fresh fetch on next request */
+  clearTokenCache() {
+    this._cachedToken = null;
+    this._tokenPromise = null;
+  }
+
+  /** Internal helper to get token with caching */
+  async _getToken() {
+    // Return cached token if available
+    if (this._cachedToken) {
+      return this._cachedToken;
+    }
+
+    // If there's already a fetch in progress, wait for it
+    if (this._tokenPromise) {
+      return this._tokenPromise;
+    }
+
+    // Start a new fetch and cache the promise
+    this._tokenPromise = (async () => {
+      try {
+        const token = await this.getAccessToken();
+        this._cachedToken = token;
+        this._tokenPromise = null; // Clear the promise cache
+        return token;
+      } catch (error) {
+        this._tokenPromise = null; // Clear the promise cache on error
+        throw error;
+      }
+    })();
+
+    return this._tokenPromise;
   }
 
   /** Internal helper to build headers for JSON requests. */
   async _getHeaders(json = true) {
     const headers = {};
     if (json) headers['Content-Type'] = 'application/json';
-    const token = this.getAccessToken && await this.getAccessToken();
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    
+    try {
+      const token = await this._getToken();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+    } catch (error) {
+      console.warn('Failed to get access token:', error);
+    }
+    
     return headers;
   }
 
@@ -258,6 +304,11 @@ export function useChat({
         setCurrentToolCall(null);
         setIsLoading(true);
         onStatusUpdate?.('clear_status');
+      });
+
+      sse.addEventListener('thread_created', event => {
+        const { threadId } = JSON.parse(event.data);
+        setThreadId(threadId);
       });
 
       sse.addEventListener('thread_renamed', event => {

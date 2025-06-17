@@ -28,7 +28,7 @@ import {
     ChartBarIcon as ChartBarIconSolid,
 } from '@heroicons/react/24/solid';
 
-function App({ getAccessToken, connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
+function App({ camelClient, connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
     const prevMessages = useRef([]);
     const [inputMessage, setInputMessage] = useState('');
     const chatContainerRef = useRef(null);
@@ -72,11 +72,8 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
         }
     };
 
-    // Create CamelClient with token fetching function
-    const client = useMemo(
-        () => new CamelClient(getAccessToken, "http://localhost:8000"),
-        [getAccessToken]
-    );
+    // Use the passed camelClient instance
+    const client = camelClient;
 
     // Use the custom hook
     const {
@@ -515,10 +512,6 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
             }
         }
     }, [isStreaming, currentToolCall, groupedMessages]);
-
-    const [isMounted, setIsMounted] = useState(false);
-    useEffect(() => { setIsMounted(true); }, []);
-    if (!isMounted) return null;
 
     return (
         <div className="chat-and-artifact-container">

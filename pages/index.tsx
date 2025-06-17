@@ -1,6 +1,7 @@
 import type { GetServerSideProps } from 'next'
-import React from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import App from '../components/chat/App'
+import { CamelClient } from '../components/camelClient'
 
 interface IndexProps {
   initialMessages: any[]
@@ -21,31 +22,23 @@ export default function Index({
   selectedDataSource,
   userData,
 }: IndexProps) {
-  // Create a function to fetch access token from the API endpoint
   const getAccessToken = async () => {
-    try {
-      const response = await fetch('/api/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Token fetch failed: ${response.status}`);
-      }
-      
-      return await response.text();
-    } catch (error) {
-      console.error('Failed to fetch access token:', error);
-      // Fallback to userData?.accessToken if API fails
-      return userData?.accessToken;
-    }
+    const response = await fetch('/api/token', { method: 'POST' });
+    return response.ok ? response.text() : null;
   };
+
+  // Create camelClient instance with useMemo to persist across renders
+  // Token caching is now handled inside the CamelClient itself
+  const camelClient = useMemo(() => new CamelClient(getAccessToken), []);
+
+  // The App component is client-side only, so we need to wait for it to mount
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
+  if (!isMounted) return null;
 
   return (
     <App
-      getAccessToken={getAccessToken}
+      camelClient={camelClient}
       initialMessages={initialMessages}
       availableModels={availableModels}
       connectedApps={connectedApps}
@@ -58,31 +51,23 @@ export default function Index({
 }
 
 export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, query }) => {
-  // Mock data for testing
-  const initialMessages: any[] = []
   
-  const availableModels = {
-    'gpt-4': { name: 'GPT-4', description: 'Most capable model' },
-    'gpt-3.5-turbo': { name: 'GPT-3.5 Turbo', description: 'Fast and efficient' }
-  }
-  
-  const connectedApps: any[] = []
-  
-  const threadData = {
-    thread_id: null,
-    model: 'gpt-4',
-    artifacts: []
-  }
-  
-  const modelOverride = typeof query.modelOverride === 'string' ? query.modelOverride : null
-  
+  // IMPORTANT: Set this to the ID of the data source you want to use
   const selectedDataSource = 1
   
   const userData = {
     id: null,
     name: 'Anonymous User',
     email: null,
-    accessToken: process.env.CAMEL_API_KEY
+  }
+
+  const connectedApps: any[] = []
+  const initialMessages: any[] = []
+  const threadData = { thread_id: null }
+  const modelOverride = null
+  const availableModels = {
+    'o3': { name: 'o3', description: 'Most capable model' },
+    'o4-mini': { name: 'o4-mini', description: 'Fast and efficient' }
   }
 
   return {
