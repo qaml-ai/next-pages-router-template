@@ -150,6 +150,7 @@ export class CamelClient {
       body: JSON.stringify({ knowledge_bases: knowledgeBases }),
     });
   }
+
 }
 
 /**
