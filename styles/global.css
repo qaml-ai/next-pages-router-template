@@ -1271,7 +1271,8 @@ span.artifact-button-final-message-description {
 .chat-and-artifact-container {
     display: flex; 
     flex-direction: row-reverse; 
-    height: 100%;
+    /* height: 100%; */
+    height: 100dvh;
     justify-content: space-between;
 }
 .artifact-pane {
