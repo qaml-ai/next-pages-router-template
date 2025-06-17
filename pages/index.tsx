@@ -1,5 +1,7 @@
 import type { GetServerSideProps } from 'next'
+import React, { useMemo } from 'react'
 import App from '../components/chat/App'
+import { CamelClient } from '../components/camelClient'
 
 interface IndexProps {
   initialMessages: any[]
@@ -9,6 +11,7 @@ interface IndexProps {
   modelOverride: string | null
   selectedDataSource: any
   userData: any
+  client: CamelClient
 }
 
 export default function Index({
@@ -20,8 +23,14 @@ export default function Index({
   selectedDataSource,
   userData,
 }: IndexProps) {
+  const client = useMemo(
+    () => new CamelClient(() => userData?.accessToken, "http://localhost:8000"),
+    [userData?.accessToken],
+  )
+
   return (
     <App
+      client={client}
       initialMessages={initialMessages}
       availableModels={availableModels}
       connectedApps={connectedApps}
@@ -64,7 +73,8 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, 
   const userData = {
     id: null,
     name: 'Anonymous User',
-    email: null
+    email: null,
+    accessToken: process.env.CAMEL_API_KEY
   }
 
   return {

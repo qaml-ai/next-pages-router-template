@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { deleteAllThreads } from '../api';
+import React, { useState, useRef, useEffect } from 'react';
+import { CamelClient } from '../camelClient';
 
 function Modal({ userData }) {
     const [isConfirmingDeleteAccount, setIsConfirmingDeleteAccount] = useState(false);
@@ -48,9 +48,14 @@ function Modal({ userData }) {
         setIsConfirmingClearHistory(true);
     };
 
+    const clientRef = useRef(new CamelClient(() => userData?.accessToken));
+    useEffect(() => {
+        clientRef.current.setAccessToken(userData?.accessToken);
+    }, [userData?.accessToken]);
+
     const handleConfirmClearHistory = async () => {
         try {
-            const response = await deleteAllThreads();
+            const response = await clientRef.current.deleteAllThreads();
 
             if (response.ok) {
                 window.location.href = '/';
