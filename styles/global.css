@@ -108,24 +108,12 @@
 /* ==================================================================== */
 /*  Section: Misc styling                                               */
 /*  Purpose: Styles used in multiple app components:                    */
-/*      - Body */
-/*      - Scrollbar */
-/*      - Heroicons */
-/*      - Icon-buttons + on hover tooltip styling */
-/*      - Warning message*/
-/*      - Error message*/
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
+/*      - Body                                                          */
+/*      - Scrollbar                                                     */
+/*      - Heroicons (lightmode / darkmode)                              */
+/*      - Icon-buttons + on hover tooltip styling                       */
+/*      - Warning message                                               */
+/*      - Error message                                                 */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -365,22 +353,23 @@ button {
 .error-message ul {
     margin: 0px;
 }
+/* hide buttons on mobile */
+.mobile-hidden {
+    display: none;
+}
+@media (min-width: 820px) {
+    .mobile-hidden {
+        display: block;
+    }
+}
 
 /* ==================================================================== */
 /*  Section: Chat App                                                   */
 /*  Purpose: Styles for the main app containers and messages            */
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
+/*      - Chat containers                                               */
+/*      - Loading spinner                                               */
+/*      - User messages                                                 */
+/*      - Assistant messages                                            */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -406,8 +395,17 @@ button {
     align-items: center;
     justify-content: flex-start;
 }
-.chat-container.empty {
-    /* justify-content: center; */
+/* wherever dvh isn't supported */
+@supports not (height: 100dvh) {
+    .chat-container {
+        height: calc(100vh - 7.9rem);
+    }
+}
+@media (min-width: 768px) {
+    /* ---------------------------- Chat ----------------------- */
+    .chat-container {
+        width: calc(100% - 2rem);
+    }
 }
 .chat-container-bottom-padding {
     padding: 2.25rem;
@@ -498,24 +496,12 @@ span.chat-error-message {
 /* ==================================================================== */
 /*  Section: Chat App - Text input field + components                   */
 /*  Purpose: Styles for:                                                */
-/*      - Anchor for chat input field */
-/*      - Chat input field */
-/*      - Data source select + drop down */
-/*      - Model switcher */
-/*      - Graph mode toggle */
-/*      - Send button */
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
+/*      - Anchor for chat input field                                   */
+/*      - Chat input field                                              */
+/*      - Data source select + drop down                                */
+/*      - Model switcher                                                */
+/*      - Graph mode toggle                                             */
+/*      - Send button                                                   */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -801,18 +787,6 @@ span.new-chat-label {
 /*  Section: Chat recommendations                                       */
 /*  Purpose: Styles the recommendations in active and empty chat        */
 /*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
 .chat-recommendations {
@@ -844,6 +818,12 @@ span.new-chat-label {
     flex-direction: column;
     column-gap: 8px;
     justify-content: space-between;
+}
+@media (min-width: 768px) {
+    .chat-recommendations-list.empty-chat,
+    .chat-recommendations.empty-chat h3 {
+        width: 100%;
+    }
 }
 .chat-recommendation-button {
     padding: 5px;
@@ -934,18 +914,6 @@ span.new-chat-label {
 /*  Section: Thumbs Down Feedback menu                                  */
 /*  Purpose: Small submenu shown when a user thumbs down a message      */
 /*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
 .feedback-container {
@@ -988,18 +956,7 @@ span.new-chat-label {
 /* ==================================================================== */
 /*  Section: Tool Calls                                                 */
 /*  Purpose: Styles the "Analysis" portion of each message              */
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
+/*      - Tool calls                                                    */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -1223,22 +1180,11 @@ img.tool-call-logo.rounded {
 }
 /* ==================================================================== */
 /*  Section: Artifact pane styling                                      */
-/*  Purpose: Styles: */
-/*      - Artifact buttons */
-/*      - Artifact window sizing */
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
+/*  Purpose: Styles:                                                    */
+/*      - Artifact buttons                                              */
+/*      - Artifact window sizing                                        */
+/*      - Artifact pane header                                          */
+/*      - Artifact pane header                                          */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
 /* --- Artifact buttons --- */
@@ -1306,10 +1252,22 @@ span.artifact-button-final-message-description {
     width: 60% !important;
     max-width: 55rem;
 }
+@media (min-width: 1330px) {
+    .artifact-pane.open + .react-chat-container {
+        width: --webkit-fill-available;
+        max-width: none;
+    }
+}
 .artifact-pane.open.zoomed + .react-chat-container {
     width: auto !important;
     max-width: 55rem;
 }
+@supports not (height: 92dvh) {
+    .artifact-pane.open {
+        height: 100vh;
+    }
+}
+
 .chat-and-artifact-container {
     display: flex; 
     flex-direction: row-reverse; 
@@ -1345,6 +1303,25 @@ span.artifact-button-final-message-description {
 }
 .artifact-pane.open.zoomed {
     width: 100%;
+}
+@media (min-width: 820px) {
+    .artifact-pane.open {
+        position: static;
+        z-index: auto;
+        width: 40%;
+        height: 100dvh;
+    }
+    .artifact-pane {
+        margin: 0px 0px 0px 10px;
+        border-top: none;
+        border-left: 1px solid var(--clr-var-button-outline);
+    }
+    .artifact-pane.open.zoomed + .react-chat-container {
+        width: 30% !important;
+    }
+    .artifact-pane.open.zoomed {
+        width: 70%;
+    }
 }
 .artifact-pane-header {
     display: flex;
@@ -1397,10 +1374,6 @@ span.artifact-button-final-message-description {
 .plot-container * {
     transition: width 0.2s ease-in-out;
 }
-iframe {
-	border: none;
-	border-radius: 0px 0px 7px 7px;
-}
 .artifact-pane-body-content-empty {
     margin: 30px 10px;
 }
@@ -1426,7 +1399,6 @@ body.light-background {
     flex-grow: 1; /* Allow artifact to grow and fill remaining space */
     overflow: auto; /* Add scrolling if content exceeds available space */
 }
-
 h1.artifact-title {
     color: var(--clr-var-text-primary);
     font-size: var(--fs-mini);
@@ -1703,7 +1675,7 @@ span.dropdown-header {
     width: 100%;
     margin-top: 10px;
 }
-/* --------------- CODE WIDGET --------------- */
+/* --------------- ARTIFACT CODE WIDGET --------------- */
 .artifact-code-container {
     background-color: var(--clr-var-code-block-background);
     padding: 10px;
@@ -1724,7 +1696,7 @@ span.dropdown-header {
     display: none;
 }
 
-/* ---------------------------- ARTIFACT markdown styling ----------------------- */
+/* ---------------------------- ARTIFACT table styling ----------------------- */
 .artifact {
     overflow: auto;
 }
@@ -1750,30 +1722,9 @@ span.dropdown-header {
 .artifact td {
     background-color: var(--clr-var-light-background);
 }
-
-/* --------------- IMAGE WIDGET --------------- */
-.image-widget img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    background-color: var(--clr-var-light-background);
-}
-
 /* ==================================================================== */
 /*  Section: Chat Markdown                                              */
 /*  Purpose: Formatting of the assistants output messages               */
-/*                                                                      */
-/*  Selectors:                                                          */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Depends on variables:                                               */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  Breakpoints / containers:                                           */
-/*    [To be filled out]                                                */
-/*                                                                      */
-/*  JS hooks:                                                           */
-/*    [To be filled out]                                                */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -1832,6 +1783,11 @@ span.dropdown-header {
     .chat-container ol {
         padding-inline-start: 35px; /* Increase padding for Safari */
         width: calc(100% - 2rem);
+    }
+}
+@media (min-width: 580px) {
+    .chat-container ol {
+        padding-inline-start: 30px;
     }
 }
 .chat-container ul {
@@ -1966,74 +1922,4 @@ p.katex-block {
     background: var(--clr-var-math-block-background);
     border-radius: 5px;
     padding: .4rem 1rem;  
-}
-/* ------------------------------------------ RESPONSIVE Styling --------------------------------------------------- */
-
-/* wherever dvh isn't supported */
-@supports not (height: 100dvh) {
-    .chat-container {
-        height: calc(100vh - 8.2rem);
-    }
-}
-@supports not (height: 92dvh) {
-    .artifact-pane.open {
-        /* height: calc(100vh - 8.2rem); */
-        height: 100vh;
-    }
-}
-/* smallest phone */
-
-@media (min-width: 580px) {
-    /* ---------------------------- Code blocks ----------------------- */
-    /* .code-block {
-        width: calc(100% - 1.2rem);
-    } */
-    .chat-container ol {
-        padding-inline-start: 30px;
-    }
-}
-/* styles for tablet */
-@media (min-width: 768px) {
-    /* ---------------------------- Chat ----------------------- */
-    .chat-container {
-        width: calc(100% - 2rem);
-    }
-    /* ---------------------------- Chat start screen ----------------------- */
-    .chat-recommendations-list.empty-chat,
-    .chat-recommendations.empty-chat h3 {
-        width: 100%;
-    }
-}
-
-/* min is 820 bc AP needs to be at least 320px in the smallest size */
-@media (min-width: 820px) {
-    /* ---------------------------- Artifact pane ----------------------- */
-    .artifact-pane.open {
-        position: static;
-        z-index: auto;
-        width: 40%;
-        height: 100dvh;
-    }
-    .artifact-pane {
-        margin: 0px 0px 0px 10px;
-        border-top: none;
-        border-left: 1px solid var(--clr-var-button-outline);
-    }
-    .mobile-hidden {
-        display: block;
-    }
-    .artifact-pane.open.zoomed + .react-chat-container {
-        width: 30% !important;
-    }
-    .artifact-pane.open.zoomed {
-        width: 70%;
-    }
-}
-
-/* styles for xl desktop */
-@media (min-width: 1330px) {
-    .artifact-pane.open + .react-chat-container {
-        width: --webkit-fill-available;
-        max-width: none;
-    }
 }
