@@ -10,7 +10,6 @@ import {
     Square2StackIcon as Square2StackIconSolid,
 } from '@heroicons/react/24/solid';
 import ThumbsDownFeedback from './ThumbsDownFeedback';
-import { submitThumbsUp, submitThumbsDown } from '../api';
 
 const ChatMessageBottomBar = ({
     role,

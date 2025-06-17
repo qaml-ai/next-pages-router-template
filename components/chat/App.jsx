@@ -7,10 +7,8 @@ import ArtifactPane from '../artifact/ArtifactPane';
 
 // Import KnowledgeBaseModal and utilities
 import KnowledgeBaseModal from '../modals/KnowledgeBaseModal';
-import { fetchRecommendations as fetchRecommendationsApi } from '../api';
 
-// Import custom hooks
-import { useChat } from './useChat';
+import { useChat, CamelClient } from '../camelClient';
 
 // Import Heroicons
 // Outline icons
@@ -30,7 +28,7 @@ import {
     ChartBarIcon as ChartBarIconSolid,
 } from '@heroicons/react/24/solid';
 
-function App({ connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
+function App({ getAccessToken, connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
     const prevMessages = useRef([]);
     const [inputMessage, setInputMessage] = useState('');
     const chatContainerRef = useRef(null);
@@ -74,6 +72,12 @@ function App({ connectedApps, availableModels, initialMessages, threadData, mode
         }
     };
 
+    // Create CamelClient with token fetching function
+    const client = useMemo(
+        () => new CamelClient(getAccessToken, "http://localhost:8000"),
+        [getAccessToken]
+    );
+
     // Use the custom hook
     const {
         messages,
@@ -85,6 +89,7 @@ function App({ connectedApps, availableModels, initialMessages, threadData, mode
         sendMessageToServer,
         handleStopStreaming,
     } = useChat({
+        client,
         initialThreadId: threadData ? threadData.id : null,
         initialMessages,
         model,
@@ -323,7 +328,7 @@ function App({ connectedApps, availableModels, initialMessages, threadData, mode
         setIsLoadingRecommendations(true);
         try {
             // Use different endpoint based on whether there's a thread
-            const response = await fetchRecommendationsApi(
+            const response = await client.fetchRecommendations(
                 threadId,
                 selectedDataSourcesIDs
             );

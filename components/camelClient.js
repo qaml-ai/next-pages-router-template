@@ -26,127 +26,135 @@ export class CamelClient {
   }
 
   /** Internal helper to build headers for JSON requests. */
-  _getHeaders(json = true) {
+  async _getHeaders(json = true) {
     const headers = {};
     if (json) headers['Content-Type'] = 'application/json';
-    const token = this.getAccessToken && this.getAccessToken();
+    const token = this.getAccessToken && await this.getAccessToken();
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
   }
 
   // Dashboard-related API calls
-  fetchAvailableDashboards() {
+  async fetchAvailableDashboards() {
     return fetch(`${this.baseUrl}/dashboards/api/available`, {
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  checkArtifactCompatibility(dashboardId, artifactId) {
+  async checkArtifactCompatibility(dashboardId, artifactId) {
     return fetch(`${this.baseUrl}/dashboards/check-artifact-compatibility/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify({ dashboard_id: dashboardId, artifact_id: artifactId }),
     });
   }
 
-  addArtifactToDashboard(dashboardId, artifactId) {
+  async addArtifactToDashboard(dashboardId, artifactId) {
     return fetch(`${this.baseUrl}/dashboards/${dashboardId}/add_artifact/${artifactId}/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  createDashboard(title, artifactId) {
+  async createDashboard(title, artifactId) {
     return fetch(`${this.baseUrl}/dashboards/new/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify({ title, artifact_id: artifactId }),
     });
   }
 
   // Thread history clearing
-  deleteAllThreads() {
+  async deleteAllThreads() {
     return fetch(`${this.baseUrl}/delete_all_threads/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       credentials: 'include',
     });
   }
 
   // Chat-related API calls
-  sendMessage(payload) {
+  async sendMessage(payload) {
     return fetch(`${this.baseUrl}/api/sendMessage`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify(payload),
     });
   }
 
-  cancelChatThread(threadId) {
+  async cancelChatThread(threadId) {
     return fetch(`${this.baseUrl}/api/chat/${threadId}/cancel/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  streamMessages(payload) {
+  async streamMessages(payload) {
     return new SSE(`${this.baseUrl}/api/v1/ask_camel`, {
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       payload: JSON.stringify(payload),
     });
   }
 
-  fetchRecommendations(threadId, dataSources) {
+  async fetchRecommendations(threadId, dataSources) {
+    // TODO: Implement this
+    return Response.json({
+      "suggestions": [
+        "Recommendation 1",
+        "Recommendation 2",
+        "Recommendation 3",
+      ]
+    })
     const endpoint = threadId
-      ? `${this.baseUrl}/api/chat/${threadId}/recommendations/`
-      : `${this.baseUrl}/api/chat/recommendations/`;
+      ? `${this.baseUrl}/api/v1/chat/${threadId}/recommendations/`
+      : `${this.baseUrl}/api/v1/chat/recommendations/`;
     return fetch(endpoint, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify({ dataSources }),
     });
   }
 
   // Feedback API calls
-  submitThumbsUp(data) {
+  async submitThumbsUp(data) {
     return fetch(`${this.baseUrl}/api/submit_thumbs_up/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify(data),
     });
   }
 
-  submitThumbsDown(data) {
+  async submitThumbsDown(data) {
     return fetch(`${this.baseUrl}/api/submit_thumbs_down/`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify(data),
     });
   }
 
   // Knowledge base API calls
-  fetchCurrentUserInfo() {
+  async fetchCurrentUserInfo() {
     return fetch(`${this.baseUrl}/api/current-user-info`, {
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  fetchConnectionInfo(connectionId) {
+  async fetchConnectionInfo(connectionId) {
     return fetch(`${this.baseUrl}/api/connections/${connectionId}`, {
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  fetchKnowledgeBases(connectionId) {
+  async fetchKnowledgeBases(connectionId) {
     return fetch(`${this.baseUrl}/connections/${connectionId}/knowledge-base`, {
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
     });
   }
 
-  updateKnowledgeBases(connectionId, knowledgeBases) {
+  async updateKnowledgeBases(connectionId, knowledgeBases) {
     return fetch(`${this.baseUrl}/connections/${connectionId}/knowledge-base`, {
       method: 'POST',
-      headers: this._getHeaders(),
+      headers: await this._getHeaders(),
       body: JSON.stringify({ knowledge_bases: knowledgeBases }),
     });
   }
@@ -202,13 +210,13 @@ export function useChat({
       threadId,
       model,
       message,
-      source_id: 1,
+      source_id: selectedDataSourcesIDs[0],
       autographMode: autograph,
       stream: true,
     };
 
     try {
-      const sse = clientRef.current.streamMessages(payload);
+      const sse = await clientRef.current.streamMessages(payload);
       eventSourceRef.current = sse;
 
       sse.addEventListener('message', event => {

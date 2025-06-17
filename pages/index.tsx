@@ -1,7 +1,6 @@
 import type { GetServerSideProps } from 'next'
-import React, { useMemo } from 'react'
+import React from 'react'
 import App from '../components/chat/App'
-import { CamelClient } from '../components/camelClient'
 
 interface IndexProps {
   initialMessages: any[]
@@ -11,7 +10,6 @@ interface IndexProps {
   modelOverride: string | null
   selectedDataSource: any
   userData: any
-  client: CamelClient
 }
 
 export default function Index({
@@ -23,14 +21,31 @@ export default function Index({
   selectedDataSource,
   userData,
 }: IndexProps) {
-  const client = useMemo(
-    () => new CamelClient(() => userData?.accessToken, "http://localhost:8000"),
-    [userData?.accessToken],
-  )
+  // Create a function to fetch access token from the API endpoint
+  const getAccessToken = async () => {
+    try {
+      const response = await fetch('/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Token fetch failed: ${response.status}`);
+      }
+      
+      return await response.text();
+    } catch (error) {
+      console.error('Failed to fetch access token:', error);
+      // Fallback to userData?.accessToken if API fails
+      return userData?.accessToken;
+    }
+  };
 
   return (
     <App
-      client={client}
+      getAccessToken={getAccessToken}
       initialMessages={initialMessages}
       availableModels={availableModels}
       connectedApps={connectedApps}
@@ -44,14 +59,7 @@ export default function Index({
 
 export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, query }) => {
   // Mock data for testing
-  const initialMessages = [
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hello! How can I help you today?',
-      artifacts: []
-    }
-  ]
+  const initialMessages: any[] = []
   
   const availableModels = {
     'gpt-4': { name: 'GPT-4', description: 'Most capable model' },
@@ -68,7 +76,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async ({ req, 
   
   const modelOverride = typeof query.modelOverride === 'string' ? query.modelOverride : null
   
-  const selectedDataSource = null
+  const selectedDataSource = 1
   
   const userData = {
     id: null,

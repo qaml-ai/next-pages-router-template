@@ -1,10 +1,4 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import {
-    fetchAvailableDashboards,
-    checkArtifactCompatibility,
-    addArtifactToDashboard,
-    createDashboard,
-} from '../api';
 import ArtifactContent from './ArtifactContent';
 import {
     XMarkIcon,

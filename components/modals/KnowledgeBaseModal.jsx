@@ -1,10 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    fetchCurrentUserInfo,
-    fetchConnectionInfo,
-    fetchKnowledgeBases as fetchKnowledgeBasesApi,
-    updateKnowledgeBases,
-} from '../api';
 
 function KnowledgeBaseModal({ connectionId, onClose }) {
     const [knowledgeBases, setKnowledgeBases] = useState([]);

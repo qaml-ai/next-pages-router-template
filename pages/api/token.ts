@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const CAMELAI_API_KEY = process.env.CAMELAI_API_KEY;        // long-lived key
-const CAMELAI_STS_URL = 'https://api.camelai.com/v1/token'; // your STS endpoint
+const CAMELAI_API_KEY = process.env.CAMEL_API_KEY;        // long-lived key
+const CAMELAI_STS_URL = 'http://localhost:8000/api/v1/token'; // your STS endpoint
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -19,8 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 1️⃣  Exchange API key for short-lived token
     const stsResp = await fetch(CAMELAI_STS_URL, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${CAMELAI_API_KEY}` },
-      body: JSON.stringify({ sub: session.user.id }), // optional extra claims
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${CAMELAI_API_KEY}`
+      },
+      body: JSON.stringify({ sub: "1" }), // optional extra claims
     });
 
     if (!stsResp.ok) {
