@@ -370,6 +370,7 @@ button {
 /*      - Loading spinner                                               */
 /*      - User messages                                                 */
 /*      - Assistant messages                                            */
+/*      - Retry button for message failures                             */
 /*                                                                      */
 /*  Last updated: 2025-06-13 – @illianaa                                */
 /* ==================================================================== */
@@ -492,6 +493,16 @@ span.chat-error-message {
     height: 30px;
     opacity: 1;
     margin: 0px 0px 10px 0px;
+}
+/* Retry button */
+.retry-button {
+    background-color: var(--clr-var-light-background);
+    border: 1px solid var(--clr-var-text-input-outline);
+    color: var(--clr-var-text-highlight);
+    font-size: var(--fs-p);
+    height: 30px;
+    padding: 0px 10px;
+    border-radius: 10px;
 }
 /* ==================================================================== */
 /*  Section: Chat App - Text input field + components                   */

@@ -618,7 +618,7 @@ function App({ connectedApps, availableModels, initialMessages, threadData, mode
                                     <span className="chat-error-message">Error: </span>
                                     {retryMessage.errorMessage || 'Unknown error. Please try again.'}
                                 </p>
-                                <button className="button small" onClick={() => sendMessageToServer(retryMessage.message, autographMode)}>Retry</button>
+                                <button className="retry-button" onClick={() => sendMessageToServer(retryMessage.message, autographMode)}>Retry</button>
                             </div>
                         )}
                         {/* // Recommendations display */}
