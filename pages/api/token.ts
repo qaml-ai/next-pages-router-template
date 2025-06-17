@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end('Method Not Allowed');
   }
 
-  // 🔐 Require auth to your own app (replace with real session lookup)
+  // 🔐 Require auth to your own app (TODO: replace with real session lookup)
   const session = (req as any).session;
   if (!session?.user?.id) {
     return res.status(401).json({ error: 'not authenticated' });
