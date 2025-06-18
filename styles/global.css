@@ -531,6 +531,17 @@ span.chat-error-message {
     margin-top: 20dvh;
     row-gap: 1rem;
 }
+h1.empty-chat-header {
+    font-size: var(--fs-h1);
+    color: var(--clr-var-text-highlight);
+    font-weight: var(--fw-semi);
+}
+h3.empty-chat-recommendations-header {
+    font-size: var(--fs-h2);
+    color: var(--clr-var-text-primary);
+    font-weight: var(--fw-semi);
+    margin: 0;
+}
 .chat-text-input {
     display: flex;
     flex-direction: row;

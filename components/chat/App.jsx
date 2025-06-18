@@ -647,7 +647,7 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
 
                 <div className={`chat-anchor-section ${messages.length === 0 ? 'empty-chat' : ''}`}>
                     {messages.length === 0 &&
-                        <h1>{userData.has_completed_onboarding ? "Let's get started" : "Your data is connected. Start by asking any question."}</h1>
+                        <h1 className="empty-chat-header">{userData.has_completed_onboarding ? "Let's get started" : "Your data is connected. Start by asking any question."}</h1>
                     }
                     <div className="chat-text-input">
                         <div className={`chat-text-input-field ${messages.length === 0 ? 'empty-chat' : ''}`}>
@@ -762,7 +762,7 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
                     </div>
                     {messages.length === 0 && (
                         <div className="chat-recommendations empty-chat">
-                            <h3>Recommendations</h3>
+                            <h3 className="empty-chat-recommendations-header">Recommendations</h3>
                             <div className="chat-recommendations-list empty-chat">
                                 {isLoadingRecommendations ? (
                                     // Show 3 placeholder buttons while loading
