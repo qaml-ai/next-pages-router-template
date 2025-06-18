@@ -62,7 +62,7 @@ Shows how to:
 - `o3`: Most capable model
 - `o4-mini`: Fast and efficient
 
-## Next Steps
+## Next Steps for Setup
 
 - Implement proper user authentication
 - Customize the chat UI component
