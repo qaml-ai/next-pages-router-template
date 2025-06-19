@@ -11,6 +11,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end('Method Not Allowed');
   }
 
+  // Check if API key is configured
+  if (!CAMELAI_API_KEY) {
+    return res.status(500).json({ 
+      error: 'API key not configured',
+      message: 'The server is missing the CAMEL_API_KEY environment variable. Please contact the administrator.'
+    });
+  }
+
   // 🔐 Require auth to your own app (TODO: replace with real session lookup)
   // const session = (req as any).session;
   // if (!session?.user?.id) {
