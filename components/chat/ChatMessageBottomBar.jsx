@@ -18,7 +18,8 @@ const ChatMessageBottomBar = ({
     threadId,
     isStreaming,
     isLatestMessage,
-    scrollToBottom
+    scrollToBottom,
+    client
 }) => {
     const [isCopied, setIsCopied] = useState(false);
     const [feedbackState, setFeedbackState] = useState({
@@ -96,15 +97,12 @@ const ChatMessageBottomBar = ({
                     : message.content?.content || '';
 
             try {
-                const response = await submitThumbsUp({
+                await client.submitThumbsUp({
                     user_message: userMessageContent,
                     chat_bot_message: botMessageContent,
                     message_id: message.id,
                     thread_id: threadId,
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
                 setFeedbackState(prev => ({
                     ...prev,
                     thumbsUpSubmitted: true,
@@ -133,7 +131,7 @@ const ChatMessageBottomBar = ({
                 : message.content?.content || '';
 
         try {
-            const response = await submitThumbsDown({
+            const data = await client.submitThumbsDown({
                 reason,
                 details,
                 user_message: userMessageContent,
@@ -141,10 +139,6 @@ const ChatMessageBottomBar = ({
                 message_id: message.id,
                 thread_id: threadId,
             });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
             console.log('Details submitted successfully:', data);
             setFeedbackState(prev => ({
                 ...prev,

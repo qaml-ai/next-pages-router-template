@@ -9,6 +9,7 @@ import {
     CodeBracketIcon,
 } from '@heroicons/react/24/outline';
 import { renderMarkdown } from '../utils/markdown';
+import { getDatabaseLogo } from '../images';
 
 const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => {
     if (tool_calls.length === 0) return null;
@@ -68,7 +69,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-ec-ds-tag">
                                                 <img
-                                                    src={`/static/images/${selectedConnection.name.toLowerCase()}-logo.png`}
+                                                    src={getDatabaseLogo(selectedConnection.name)}
                                                     alt={selectedConnection.name}
                                                     className="tool-call-logo"
                                                 />
@@ -156,7 +157,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                         <div className="tool-call-ec-section">
                                             <div className="tool-call-ec-ds-tag">
                                                 <img
-                                                    src={`/static/images/${selectedConnection.name.toLowerCase()}-logo.png`}
+                                                    src={getDatabaseLogo(selectedConnection.name)}
                                                     alt={selectedConnection.name}
                                                     className="tool-call-logo rounded"
                                                 />
@@ -255,7 +256,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                                     return (
                                                         <div key={index} className="tool-call-ec-ds-tag">
                                                             <img
-                                                                src={`/static/images/${connectionName.toLowerCase()}-logo.png`}
+                                                                src={getDatabaseLogo(connectionName)}
                                                                 alt={connectionName}
                                                                 className="tool-call-logo rounded"
                                                             />
@@ -330,7 +331,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                                     return (
                                                         <div key={index} className="tool-call-ec-ds-tag">
                                                             <img
-                                                                src={`/static/images/${connectionName.toLowerCase()}-logo.png`}
+                                                                src={getDatabaseLogo(connectionName)}
                                                                 alt={connectionName}
                                                                 className="tool-call-logo rounded"
                                                             />
@@ -371,7 +372,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                     <div className="tool-call-header">
                                         <div className="tool-call-header-icon">
                                             <img
-                                                src={`/static/images/${selectedConnection.name.toLowerCase()}-logo.png`}
+                                                src={getDatabaseLogo(selectedConnection.name)}
                                                 alt={selectedConnection.name}
                                                 className="tool-call-logo rounded"
                                             />

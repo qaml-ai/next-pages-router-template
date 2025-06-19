@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const CAMELAI_API_KEY = process.env.CAMEL_API_KEY;
-const CAMELAI_STS_URL = 'https://api.camelai.com/api/v1/token';
+
+const baseUrl = process.env.CAMEL_API_URL || 'https://api.camelai.com';
+const CAMELAI_STS_URL = `${baseUrl}/api/v1/token`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -15,15 +17,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   return res.status(401).json({ error: 'not authenticated' });
   // }
 
+  // Extract source_id and optional thread_id from request body
+  const { source_id, thread_id } = req.body;
+  
+  if (!source_id) {
+    return res.status(400).json({ error: 'source_id is required' });
+  }
+
   try {
     // 1️⃣  Exchange API key for short-lived token
+    console.log("source_id", source_id)
+    const tokenPayload: any = { sub: "1", src: source_id };
+    
+    // Add thread_id if provided
+    if (thread_id) {
+      tokenPayload.thread_id = thread_id;
+    }
+    
     const stsResp = await fetch(CAMELAI_STS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${CAMELAI_API_KEY}`
       },
-      body: JSON.stringify({ sub: "1", src: "1" }), // optional extra claims
+      body: JSON.stringify(tokenPayload),
     });
 
     if (!stsResp.ok) {

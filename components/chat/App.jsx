@@ -5,10 +5,7 @@ import ChatMessage from './ChatMessage';
 import ChatMessageBottomBar from './ChatMessageBottomBar';
 import ArtifactPane from '../artifact/ArtifactPane';
 
-// Import KnowledgeBaseModal and utilities
-import KnowledgeBaseModal from '../modals/KnowledgeBaseModal';
-
-import { useChat, CamelClient } from '../camelClient';
+import { useChat } from '../camelClient';
 
 // Import Heroicons
 // Outline icons
@@ -28,21 +25,22 @@ import {
     ChartBarIcon as ChartBarIconSolid,
 } from '@heroicons/react/24/solid';
 
-function App({ camelClient, connectedApps, availableModels, initialMessages, threadData, modelOverride, selectedDataSource, userData }) {
+import { CamelClient } from '../camelClient';
+
+function App({ getAccessToken, connectedApps, availableModels, initialMessages, threadID, modelOverride, selectedDataSource, userData, clientOverride }) {
     const prevMessages = useRef([]);
     const [inputMessage, setInputMessage] = useState('');
     const chatContainerRef = useRef(null);
+    const [threadMessages, setThreadMessages] = useState(initialMessages);
+    const [threadData, setThreadData] = useState(null);
+    const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [model, setModel] = useState(() => {
         if (modelOverride && availableModels[modelOverride]) {
             return modelOverride;
         }
-        // Check thread data or localStorage
-        const thread = threadData ? threadData : { model: null };
-
-        // Prioritize thread model, then localStorage, then default
-        if (thread.model) {
-            return thread.model;
-        } else if (localStorage.getItem('lastSelectedModel') && availableModels[localStorage.getItem('lastSelectedModel')]) {
+        // Check thread ID or localStorage
+        // Since we don't have thread data yet, skip thread model check
+        if (localStorage.getItem('lastSelectedModel') && availableModels[localStorage.getItem('lastSelectedModel')]) {
             return localStorage.getItem('lastSelectedModel');
         } else {
             return Object.keys(availableModels)[0];
@@ -72,8 +70,9 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
         }
     };
 
-    // Use the passed camelClient instance
-    const client = camelClient;
+    // Create camelClient instance with useMemo to persist across renders
+    // Token caching is now handled inside the CamelClient itself
+    const client = useMemo(() => clientOverride || new CamelClient(getAccessToken), [clientOverride, getAccessToken]);
 
     // Use the custom hook
     const {
@@ -87,8 +86,8 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
         handleStopStreaming,
     } = useChat({
         client,
-        initialThreadId: threadData ? threadData.id : null,
-        initialMessages,
+        initialThreadId: threadID || null,
+        initialMessages: threadMessages,
         model,
         selectedDataSourcesIDs,
         onThreadCreated: ({ threadId }) => {
@@ -114,11 +113,39 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
 
     const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
 
+    // Fetch thread messages when threadID is provided
     useEffect(() => {
-        const thread = threadData ? threadData : { connection_ids: [] };
-        if (thread.connection_ids?.length > 0) {
-            setSelectedDataSourcesIDs(thread.connection_ids);
-        } else if (selectedDataSource) {
+        if (threadID && initialMessages.length === 0) {
+            setIsLoadingThread(true);
+            const fetchThreadData = async () => {
+                try {
+                    const data = await client.fetchThreadMessages(threadID);
+                    if (data.messages) {
+                        setThreadMessages(data.messages);
+                    }
+                    // Update model and data sources based on thread data
+                    if (data.thread) {
+                        setThreadData(data.thread);
+                        if (data.thread.model && availableModels[data.thread.model]) {
+                            setModel(data.thread.model);
+                        }
+                        if (data.thread.connection_ids?.length > 0) {
+                            setSelectedDataSourcesIDs(data.thread.connection_ids);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch thread messages:', error);
+                } finally {
+                    setIsLoadingThread(false);
+                }
+            };
+            fetchThreadData();
+        }
+    }, [threadID, client, initialMessages.length, availableModels]);
+
+    useEffect(() => {
+        // Since we don't have thread data yet, skip connection_ids check
+        if (selectedDataSource) {
             setSelectedDataSourcesIDs([selectedDataSource]);
         } else {
             const saved = localStorage.getItem(`dataSources_null`);
@@ -257,13 +284,6 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
         return artifactData.reduce((map, artifact) => { map[artifact.id] = artifact; return map; }, {});
     }, [messages]);
 
-    // Knowledge base modal state
-    const [knowledgeBaseModal, setKnowledgeBaseModal] = useState({
-        isOpen: false,
-        connectionId: null,
-        connectionData: null
-    });
-
     // Add the handleInputChange function
     const handleInputChange = (e) => {
         const text = e.target.innerText;
@@ -325,16 +345,10 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
         setIsLoadingRecommendations(true);
         try {
             // Use different endpoint based on whether there's a thread
-            const response = await client.fetchRecommendations(
+            const data = await client.fetchRecommendations(
                 threadId,
                 selectedDataSourcesIDs
             );
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
             setRecommendations(data.suggestions);
             // Add a small delay to ensure the DOM has updated
             setTimeout(() => {
@@ -455,24 +469,6 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Handler to open the knowledge base modal
-    const openKnowledgeBaseModal = (dataSource) => {
-        setKnowledgeBaseModal({
-            isOpen: true,
-            connectionId: dataSource.id,
-            connectionData: dataSource
-        });
-    };
-
-    // Handler to close the knowledge base modal
-    const closeKnowledgeBaseModal = () => {
-        setKnowledgeBaseModal({
-            isOpen: false,
-            connectionId: null,
-            connectionData: null
-        });
-    };
-
     // Add a function to toggle the expanded/collapsed state of a tool message group
     const toggleToolMessages = (groupId) => {
         setExpandedGroups(prev => ({
@@ -520,7 +516,7 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
             </div>
             <div className="react-chat-container" id="chat-root">
                 {/* if there are no messages, don't show the chat container */}
-                {messages.length > 0 && (
+                {!isLoadingThread && messages.length > 0 && (
                     <div className={`chat-container ${messages.length === 0 ? 'empty-chat' : ''}`} ref={chatContainerRef}>
                         {groupedMessages.map((group) => (
                             <div key={group.id} className="chat-message">
@@ -590,6 +586,7 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
                                         isStreaming={isStreaming}
                                         isLatestMessage={groupedMessages[groupedMessages.length - 1].id === group.id}
                                         scrollToBottom={scrollToBottom}
+                                        client={client}
                                     />
                                 )}
                             </div>
@@ -795,13 +792,6 @@ function App({ camelClient, connectedApps, availableModels, initialMessages, thr
                     )}
                 </div>
 
-                {/* Knowledge Base Modal */}
-                {knowledgeBaseModal.isOpen && (
-                    <KnowledgeBaseModal
-                        connectionId={knowledgeBaseModal.connectionId}
-                        onClose={closeKnowledgeBaseModal}
-                    />
-                )}
             </div>
         </div>
     );

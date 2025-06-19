@@ -11,6 +11,7 @@ import {
     ChevronLeftIcon,
     PlusIcon,
 } from '@heroicons/react/24/outline';
+import { getDatabaseLogo } from '../images';
 
 function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFirstArtifact, isLastArtifact, hasArtifacts }) {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -289,7 +290,7 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
             <div className="artifact-pane-header">
                 <div className="left">
                     {artifact?.app_label && (
-                        <img src={`/static/images/${(artifact.app_label || '').toLowerCase()}-logo.png`} alt={artifact.app_label} />
+                        <img src={getDatabaseLogo(artifact.app_label)} alt={artifact.app_label} />
                     )}
                     <h1 className="artifact-title">{artifact?.title || 'Conversation Artifacts'}</h1>
                 </div>
