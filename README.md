@@ -10,11 +10,11 @@ This endpoint handles secure token generation for the CamelClient:
 - Should be protected by your own authentication (see TODO comment in the file)
 - Returns the JWT token to the browser for use by the CamelClient
 
-### 2. Component Initialization (`pages/index.tsx`)
+### 2. Main Application (`pages/index.tsx`)
 Shows how to:
 - Create a `CamelClient` instance with the token fetcher function
-- Initialize the chat UI component with the client
-- Configure available models and data sources
+- Automatically fetch available data sources from your CamelAI account
+- Initialize the chat UI component with the selected configuration
 
 ## Setup
 
@@ -23,13 +23,7 @@ Shows how to:
    export CAMEL_API_KEY=your_api_key_here
    ```
 
-2. **Configure Data Source**
-   Edit `pages/index.tsx` and set your data source ID:
-   ```javascript
-   const selectedDataSource = 1  // Replace with your data source ID
-   ```
-
-3. **Add Authentication**
+2. **Add Authentication**
    Uncomment and implement the authentication check in `pages/api/token.ts`:
    ```javascript
    // const session = (req as any).session;
@@ -38,7 +32,7 @@ Shows how to:
    // }
    ```
 
-4. **Install & Run**
+3. **Install & Run**
    ```bash
    npm install
    npm run dev
@@ -46,10 +40,17 @@ Shows how to:
 
 ## How It Works
 
-1. The browser requests a token from `/api/token`
-2. Your server exchanges the API key for a short-lived JWT
-3. The CamelClient uses this token to communicate with CamelAI
-4. The chat UI component handles the user interface
+1. **Server-side Setup**: The app automatically fetches your available data sources using your API key
+2. **Data Source Selection**: Users are presented with a friendly UI to select from available data sources
+3. **Token Exchange**: The browser requests a token from `/api/token` with the selected data source
+4. **Chat Interface**: The CamelClient uses the token to communicate with CamelAI and loads the chat UI
+
+## User Experience
+
+### Setup
+- If no API key is set, users see a helpful error message with setup instructions
+- If API key is set but no data sources exist, users get a link to add data sources in the console
+- If data sources are available, users select one and start chatting
 
 ## Security Notes
 
@@ -62,9 +63,16 @@ Shows how to:
 - `o3`: Most capable model
 - `o4-mini`: Fast and efficient
 
-## Next Steps for Setup
+## Error Handling
 
-- Implement proper user authentication
-- Customize the chat UI component
-- Configure additional data sources
+The app gracefully handles common scenarios:
+- **Missing API Key**: Clear error message with setup instructions
+- **API Connection Issues**: Friendly error message for connectivity problems
+- **No Data Sources**: Helpful guidance to add data sources via the console
+
+## Next Steps for Customization
+
+- Implement proper user authentication in the token endpoint
+- Customize the chat UI component styling
 - Add custom functionality using the CamelClient API
+- Configure additional models or features as needed
