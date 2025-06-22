@@ -1,6 +1,7 @@
 import React from 'react';
 import Index from '../pages/index';
 import { CamelClient } from '../components/camelClient';
+const SSE = require('sse.js');
 
 // Example 1: Mock client for development
 class MockCamelClient extends CamelClient {
@@ -8,36 +9,41 @@ class MockCamelClient extends CamelClient {
     super(() => 'mock-token', 'http://localhost:3001');
   }
 
-  async sendMessage(payload) {
+  async sendMessage(payload: any) {
     console.log('Mock sendMessage called:', payload);
     return { success: true, message: 'Mock response' };
   }
 
-  async streamMessages(payload) {
+  async streamMessages(payload: any): Promise<any> {
     console.log('Mock streamMessages called:', payload);
     // Return a mock SSE instance
-    return {
-      addEventListener: (event, handler) => {
-        console.log('Mock addEventListener:', event);
-        // Simulate some events
-        setTimeout(() => {
-          if (event === 'message') {
-            handler({
-              data: JSON.stringify({
-                id: 'mock-1',
-                role: 'assistant',
-                content: 'This is a mock response!',
-              }),
-            });
-          }
-          if (event === 'streamEnded') {
-            handler({});
-          }
-        }, 1000);
-      },
-      close: () => console.log('Mock SSE closed'),
-      onerror: null,
+    const mockSSE = new SSE('mock://url', {
+      headers: {},
+      payload: JSON.stringify(payload)
+    });
+    
+    // Override the stream method to simulate events
+    mockSSE.stream = () => {
+      setTimeout(() => {
+        if (mockSSE.onmessage) {
+          mockSSE.onmessage({
+            id: 'mock-1',
+            data: JSON.stringify({
+              id: 'mock-1',
+              role: 'assistant',
+              content: 'This is a mock response!',
+            }),
+          } as any);
+        }
+        // Simulate stream end
+        mockSSE.close();
+      }, 1000);
     };
+    
+    // Auto-start the stream
+    setTimeout(() => mockSSE.stream(), 0);
+    
+    return mockSSE;
   }
 }
 
@@ -53,14 +59,14 @@ const devClient = new CamelClient(
 
 // Example 3: Client with additional logging
 class LoggingCamelClient extends CamelClient {
-  async sendMessage(payload) {
+  async sendMessage(payload: any) {
     console.log('[CamelClient] Sending message:', payload);
     const result = await super.sendMessage(payload);
     console.log('[CamelClient] Response:', result);
     return result;
   }
 
-  async streamMessages(payload) {
+  async streamMessages(payload: any): Promise<any> {
     console.log('[CamelClient] Starting stream:', payload);
     return super.streamMessages(payload);
   }
@@ -80,6 +86,7 @@ export function DevelopmentApp() {
       selectedDataSource={null}
       userData={{ name: 'Test User' }}
       clientOverride={mockClient}
+      dataSources={[]}
     />
   );
 }
@@ -96,6 +103,7 @@ export function LocalBackendApp() {
       selectedDataSource={null}
       userData={{ name: 'Test User' }}
       clientOverride={devClient}
+      dataSources={[]}
     />
   );
 }

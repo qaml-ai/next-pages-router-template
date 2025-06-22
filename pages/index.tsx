@@ -11,7 +11,7 @@ interface IndexProps {
   modelOverride: string | null
   selectedDataSource: string | null
   userData: any
-  clientOverride: { apiUrl: string } | null
+  clientOverride: { apiUrl: string } | CamelClient | null
   dataSources: any[]
   error?: { type: 'API_KEY_MISSING' | 'API_ERROR'; message: string }
 }
@@ -139,7 +139,11 @@ export default function Index({
   }
 
   // Create client override if apiUrl is provided from server
-  const clientOverride = clientOverrideProp?.apiUrl ? new CamelClient(getAccessToken, clientOverrideProp.apiUrl) : null;
+  const clientOverride = clientOverrideProp instanceof CamelClient 
+    ? clientOverrideProp 
+    : clientOverrideProp?.apiUrl 
+      ? new CamelClient(getAccessToken, clientOverrideProp.apiUrl) 
+      : null;
 
   // Show data source selector if none is selected
   if (!selectedDs) {
