@@ -42,6 +42,15 @@ import { SSE } from 'sse.js';
  */
 
 /**
+ * @typedef {Object} ReferenceQuery
+ * @property {string} id - Reference query ID
+ * @property {string} name - Reference query name
+ * @property {string} query - SQL query content
+ * @property {string} description - Description of what the query does
+ * @property {Array<{account_name: string}>} [other_connections] - Other connections using this reference query
+ */
+
+/**
  * A stateful client for interacting with the CamelAI API and streaming endpoints.
  * Manages a JWT access token via a getter function and automatically includes it in request headers.
  */
@@ -310,6 +319,119 @@ export class CamelClient {
     });
     if (!response.ok) {
       throw new Error(`Failed to update knowledge bases: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Fetch reference queries for a connection
+   * @param {string} connectionId - The connection ID
+   * @returns {Promise<{reference_queries: Array<ReferenceQuery>}>} Reference queries data
+   * @throws {Error} If the request fails
+   */
+  async fetchReferenceQueries(connectionId) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/reference-queries`, {
+      headers: await this._getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch reference queries: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Update reference queries for a connection
+   * @param {string} connectionId - The connection ID
+   * @param {Array<{id?: string, name: string, query: string, description?: string}>} referenceQueries - Reference queries to update
+   * @returns {Promise<{reference_queries: Array<ReferenceQuery>}>} Updated reference queries
+   * @throws {Error} If the request fails
+   */
+  async updateReferenceQueries(connectionId, referenceQueries) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/reference-queries`, {
+      method: 'POST',
+      headers: await this._getHeaders(),
+      body: JSON.stringify({ reference_queries: referenceQueries }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to update reference queries: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Add a single reference query to a connection
+   * @param {string} connectionId - The connection ID
+   * @param {Object} referenceQuery - Reference query to add
+   * @param {string} referenceQuery.name - Query name
+   * @param {string} referenceQuery.query - SQL query content
+   * @param {string} [referenceQuery.description] - Query description
+   * @returns {Promise<ReferenceQuery>} Added reference query
+   * @throws {Error} If the request fails
+   */
+  async addReferenceQuery(connectionId, referenceQuery) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/reference-queries`, {
+      method: 'PUT',
+      headers: await this._getHeaders(),
+      body: JSON.stringify(referenceQuery),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to add reference query: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Delete a reference query from a connection
+   * @param {string} connectionId - The connection ID
+   * @param {string} referenceQueryId - The reference query ID to delete
+   * @returns {Promise<Object>} Deletion confirmation
+   * @throws {Error} If the request fails
+   */
+  async deleteReferenceQuery(connectionId, referenceQueryId) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/reference-queries/${referenceQueryId}`, {
+      method: 'DELETE',
+      headers: await this._getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete reference query: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Add a single knowledge base item to a connection
+   * @param {string} connectionId - The connection ID
+   * @param {Object} knowledgeBase - Knowledge base item to add
+   * @param {string} knowledgeBase.content - Knowledge base content
+   * @returns {Promise<KnowledgeBase>} Added knowledge base item
+   * @throws {Error} If the request fails
+   */
+  async addKnowledgeBase(connectionId, knowledgeBase) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/knowledge-base`, {
+      method: 'PUT',
+      headers: await this._getHeaders(),
+      body: JSON.stringify(knowledgeBase),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to add knowledge base: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
+   * Delete a knowledge base item from a connection
+   * @param {string} connectionId - The connection ID
+   * @param {string} knowledgeBaseId - The knowledge base ID to delete
+   * @returns {Promise<Object>} Deletion confirmation
+   * @throws {Error} If the request fails
+   */
+  async deleteKnowledgeBase(connectionId, knowledgeBaseId) {
+    const response = await fetch(`${this.baseUrl}/connections/${connectionId}/knowledge-base/${knowledgeBaseId}`, {
+      method: 'DELETE',
+      headers: await this._getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete knowledge base: ${response.status} ${response.statusText}`);
     }
     return response.json();
   }
