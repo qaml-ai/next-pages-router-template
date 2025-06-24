@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import App from '../components/chat/App'
 import { CamelClient } from '../components/camelClient'
 
@@ -12,7 +13,6 @@ interface IndexProps {
   selectedDataSource: string | null
   userData: any
   clientOverride: { apiUrl: string } | CamelClient | null
-  dataSources: any[]
   error?: { type: 'API_KEY_MISSING' | 'API_ERROR'; message: string }
 }
 
@@ -79,28 +79,67 @@ export default function Index({
   modelOverride,
   selectedDataSource,
   userData,
-  dataSources,
   clientOverride: clientOverrideProp,
   error,
 }: IndexProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [selectedDs, setSelectedDs] = useState<string | null>(null);
   const [tempSelectedDs, setTempSelectedDs] = useState<string | null>(null);
+  const [dataSources, setDataSources] = useState<any[]>([]);
+  const [isLoadingDataSources, setIsLoadingDataSources] = useState(false);
+  const [dataSourceError, setDataSourceError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const getAccessToken = async (threadId?: string) => {
+  const getAccessToken = async () => {
     const response = await fetch('/api/token', { 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source_id: selectedDs, ...(threadId && { thread_id: threadId }) })
     });
     return response.ok ? response.text() : null;
   };
 
+  // Create client override if apiUrl is provided from server
+  const clientOverride = clientOverrideProp instanceof CamelClient 
+    ? clientOverrideProp 
+    : clientOverrideProp?.apiUrl 
+      ? new CamelClient(getAccessToken, clientOverrideProp.apiUrl) 
+      : null;
+
+  // Fetch data sources on client side
+  const fetchDataSources = async () => {
+    if (error) return; // Don't fetch if there's already an API key error
+    
+    setIsLoadingDataSources(true);
+    setDataSourceError(null);
+    
+    try {
+      const client = clientOverride || new CamelClient(getAccessToken);
+      const sources = await client.listDataSources({ fetchAll: true });
+      setDataSources(sources);
+    } catch (err) {
+      console.error('Failed to fetch data sources:', err);
+      setDataSourceError('Failed to load data sources. Please check your connection and try again.');
+    } finally {
+      setIsLoadingDataSources(false);
+    }
+  };
+
   useEffect(() => { 
     setIsMounted(true);
-    const lastSelected = localStorage.getItem('lastSelectedDataSource');
-    if (lastSelected && dataSources.some(ds => ds.id === lastSelected)) {
-      setTempSelectedDs(lastSelected);
+    
+    // Only fetch data sources if no API key error
+    if (!error) {
+      fetchDataSources();
+    }
+  }, [error]);
+
+  useEffect(() => {
+    // Set temp selected data source from localStorage once data sources are loaded
+    if (dataSources.length > 0) {
+      const lastSelected = localStorage.getItem('lastSelectedDataSource');
+      if (lastSelected && dataSources.some(ds => ds.id === lastSelected)) {
+        setTempSelectedDs(lastSelected);
+      }
     }
   }, [dataSources]);
 
@@ -138,15 +177,61 @@ export default function Index({
     );
   }
 
-  // Create client override if apiUrl is provided from server
-  const clientOverride = clientOverrideProp instanceof CamelClient 
-    ? clientOverrideProp 
-    : clientOverrideProp?.apiUrl 
-      ? new CamelClient(getAccessToken, clientOverrideProp.apiUrl) 
-      : null;
+  // Show loading state while fetching data sources
+  if (isLoadingDataSources) {
+    return (
+      <CenteredModal>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ ...styles.iconCircle, backgroundColor: 'var(--clr-var-dark-background)' }}>
+            <svg style={{ width: '2rem', height: '2rem', animation: 'spin 1s linear infinite' }} fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeDasharray="32" strokeDashoffset="32">
+                <animate attributeName="stroke-dasharray" dur="2s" values="0 32;16 16;0 32;0 32" repeatCount="indefinite"/>
+                <animate attributeName="stroke-dashoffset" dur="2s" values="0;-16;-32;-32" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 'var(--fw-bold)', color: 'var(--clr-var-text-highlight)', marginBottom: '0.5rem' }}>
+            Loading Data Sources...
+          </h1>
+          <p style={{ color: 'var(--clr-var-text-faded)', fontSize: 'var(--fs-p)' }}>
+            Please wait while we fetch your available data sources
+          </p>
+        </div>
+      </CenteredModal>
+    );
+  }
 
-  // Show data source selector if none is selected
-  if (!selectedDs) {
+  // Show error state if data source fetching failed
+  if (dataSourceError) {
+    return (
+      <CenteredModal error>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ ...styles.iconCircle, backgroundColor: '#fee2e2' }}>
+            <svg style={{ width: '2rem', height: '2rem', color: '#dc2626' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 'var(--fw-bold)', color: '#dc2626', marginBottom: '0.75rem' }}>
+            Failed to Load Data Sources
+          </h1>
+          <p style={{ color: 'var(--clr-var-text-primary)', fontSize: 'var(--fs-p)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+            {dataSourceError}
+          </p>
+          <button 
+            style={styles.primaryButton}
+            onClick={fetchDataSources}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+          >
+            Try Again
+          </button>
+        </div>
+      </CenteredModal>
+    );
+  }
+
+  // Show data source selector if none is selected and no thread ID provided
+  if (!selectedDs && !threadID) {
     return (
       <CenteredModal>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -265,6 +350,12 @@ export default function Index({
       selectedDataSource={selectedDs}
       userData={userData}
       clientOverride={clientOverride}
+      onThreadChanged={({ threadId }: { threadId: number }) => {
+        router.replace({
+          pathname: router.pathname,
+          query: { ...router.query, threadId }
+        }, undefined, { shallow: true });
+      }}
     />
   )
 }
@@ -277,17 +368,18 @@ const defaultProps = {
   modelOverride: null,
   selectedDataSource: null,
   userData: { id: null, name: 'Anonymous User', email: null },
-  dataSources: [],
   clientOverride: null
 };
 
-export const getServerSideProps: GetServerSideProps<IndexProps> = async () => {
+export const getServerSideProps: GetServerSideProps<IndexProps> = async (context) => {
   const apiKey = process.env.CAMEL_API_KEY;
+  const threadIdFromQuery = context.query.threadId as number | undefined;
   
   if (!apiKey) {
     return {
       props: {
         ...defaultProps,
+        threadID: threadIdFromQuery || null,
         error: {
           type: 'API_KEY_MISSING',
           message: 'The CAMEL_API_KEY environment variable is not set. Please configure it to use this application.'
@@ -296,31 +388,16 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async () => {
     };
   }
   
-  try {
-    const camelClient = new CamelClient(apiKey, process.env.CAMEL_API_URL || 'https://api.camelai.com');
-    const dataSources = await camelClient.listDataSources({ fetchAll: true });
-    
-    return {
-      props: {
-        ...defaultProps,
-        dataSources,
-        availableModels: {
-          'o3': { name: 'o3', description: 'Most capable model' },
-          'o4-mini': { name: 'o4-mini', description: 'Fast and efficient' }
-        },
-        clientOverride: process.env.CAMEL_API_URL ? { apiUrl: process.env.CAMEL_API_URL } : null
-      }
-    };
-  } catch (error) {
-    console.error('Failed to fetch data sources:', error);
-    return {
-      props: {
-        ...defaultProps,
-        error: {
-          type: 'API_ERROR',
-          message: 'Failed to connect to Camel API. Please check your API key and try again.'
-        }
-      }
-    };
-  }
+  // Simplified server-side props - no more data source fetching
+  return {
+    props: {
+      ...defaultProps,
+      threadID: threadIdFromQuery || null,
+      availableModels: {
+        'o3': { name: 'o3', description: 'Most capable model' },
+        'o4-mini': { name: 'o4-mini', description: 'Fast and efficient' }
+      },
+      clientOverride: process.env.CAMEL_API_URL ? { apiUrl: process.env.CAMEL_API_URL } : null
+    }
+  };
 }

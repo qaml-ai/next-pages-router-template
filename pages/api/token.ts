@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { CamelClient } from '../../components/camelClient';
 
 const CAMELAI_API_KEY = process.env.CAMEL_API_KEY;
 
@@ -19,28 +20,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
+  let uid = "0";
+
   // 🔐 Require auth to your own app (TODO: replace with real session lookup)
   // const session = (req as any).session;
   // if (!session?.user?.id) {
+  //   uid = session?.user?.id;
   //   return res.status(401).json({ error: 'not authenticated' });
   // }
 
-  // Extract source_id and optional thread_id from request body
-  const { source_id, thread_id } = req.body;
-  
-  if (!source_id) {
-    return res.status(400).json({ error: 'source_id is required' });
-  }
+  const camelClient = new CamelClient(CAMELAI_API_KEY, baseUrl);
+  const dataSources = await camelClient.listDataSources({ fetchAll: true });
+  const sources = dataSources.map(ds => ds.id.toString());
 
   try {
     // 1️⃣  Exchange API key for short-lived token
-    console.log("source_id", source_id)
-    const tokenPayload: any = { sub: "1", src: source_id };
-    
-    // Add thread_id if provided
-    if (thread_id) {
-      tokenPayload.thread_id = thread_id;
-    }
+    const tokenPayload: any = { srcs: sources, uid: uid };
     
     const stsResp = await fetch(CAMELAI_STS_URL, {
       method: 'POST',

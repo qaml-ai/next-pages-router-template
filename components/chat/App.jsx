@@ -27,13 +27,22 @@ import {
 
 import { CamelClient } from '../camelClient';
 
-function App({ getAccessToken, connectedApps, availableModels, initialMessages, threadID, modelOverride, selectedDataSource, userData, clientOverride }) {
+function App({ 
+  getAccessToken, 
+  connectedApps, 
+  availableModels, 
+  initialMessages, 
+  threadID, 
+  modelOverride, 
+  selectedDataSource, 
+  userData, 
+  clientOverride,
+  onThreadChanged 
+}) {
     const prevMessages = useRef([]);
     const [inputMessage, setInputMessage] = useState('');
     const chatContainerRef = useRef(null);
-    const [threadMessages, setThreadMessages] = useState(initialMessages);
     const [threadData, setThreadData] = useState(null);
-    const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [model, setModel] = useState(() => {
         if (modelOverride && availableModels[modelOverride]) {
             return modelOverride;
@@ -87,12 +96,13 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
     } = useChat({
         client,
         initialThreadId: threadID || null,
-        initialMessages: threadMessages,
+        initialMessages,
         model,
         selectedDataSourcesIDs,
         onThreadCreated: ({ threadId }) => {
             const newEvent = new CustomEvent('threadCreated', { detail: { threadId } });
             window.dispatchEvent(newEvent);
+            onThreadChanged?.({ threadId });
         },
         onThreadRenamed: ({ threadId, title }) => {
             window.dispatchEvent(new CustomEvent('threadRenamed', { detail: { threadId, title } }));
@@ -108,40 +118,21 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
             if (isNearBottom()) {
                 scrollToBottom();
             }
-        }
+        },
+        onThreadDataFetched: (data) => {
+            if (data.thread) {
+                setThreadData(data.thread);
+                if (data.thread.model && availableModels[data.thread.model]) {
+                    setModel(data.thread.model);
+                }
+                if (data.thread.connection_ids?.length > 0) {
+                    setSelectedDataSourcesIDs(data.thread.connection_ids);
+                }
+            }
+        },
     });
 
     const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
-
-    // Fetch thread messages when threadID is provided
-    useEffect(() => {
-        if (threadID && initialMessages.length === 0) {
-            setIsLoadingThread(true);
-            const fetchThreadData = async () => {
-                try {
-                    const data = await client.fetchThreadMessages(threadID);
-                    if (data.messages) {
-                        setThreadMessages(data.messages);
-                    }
-                    // Update model and data sources based on thread data
-                    if (data.thread) {
-                        setThreadData(data.thread);
-                        if (data.thread.model && availableModels[data.thread.model]) {
-                            setModel(data.thread.model);
-                        }
-                        if (data.thread.connection_ids?.length > 0) {
-                            setSelectedDataSourcesIDs(data.thread.connection_ids);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch thread messages:', error);
-                } finally {
-                    setIsLoadingThread(false);
-                }
-            };
-            fetchThreadData();
-        }
-    }, [threadID, client, initialMessages.length, availableModels]);
 
     useEffect(() => {
         // Since we don't have thread data yet, skip connection_ids check
@@ -516,7 +507,7 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
             </div>
             <div className="react-chat-container" id="chat-root">
                 {/* if there are no messages, don't show the chat container */}
-                {!isLoadingThread && messages.length > 0 && (
+                {messages.length > 0 && (
                     <div className={`chat-container ${messages.length === 0 ? 'empty-chat' : ''}`} ref={chatContainerRef}>
                         {groupedMessages.map((group) => (
                             <div key={group.id} className="chat-message">
@@ -707,8 +698,9 @@ function App({ getAccessToken, connectedApps, availableModels, initialMessages, 
                                                                         // Different model in locked thread, start a new chat
                                                                         // Save the selected model to localStorage before redirecting
                                                                         localStorage.setItem('lastSelectedModel', modelKey);
-                                                                        // Redirect to base chat URL for a new chat
-                                                                        window.location.href = '/chat';
+                                                                        // Navigate to new chat using browser navigation
+                                                                        const newChatUrlWithModel = `${newChatUrl}?model=${modelKey}`;
+                                                                        window.location.href = newChatUrlWithModel;
                                                                     } else {
                                                                         // Different model in new chat, switch the model
                                                                         setModel(modelKey);

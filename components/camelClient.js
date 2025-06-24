@@ -210,28 +210,27 @@ export class CamelClient {
    * @throws {Error} If the request fails
    */
   async fetchRecommendations(threadId, dataSources) {
-    // TODO: Remove this mock data when API endpoint is ready
-    return {
-      "suggestions": [
-        "Recommendation 1",
-        "Recommendation 2",
-        "Recommendation 3",
-      ]
-    };
-    /* Uncomment when API endpoint is ready:
-    const endpoint = threadId
-      ? `${this.baseUrl}/api/v1/chat/${threadId}/recommendations/`
-      : `${this.baseUrl}/api/v1/chat/recommendations/`;
+    const endpoint = `${this.baseUrl}/api/v1/recommendations`;
+    
+    // Build request payload - prefer threadId if available, otherwise use source_ids
+    const payload = {};
+    if (threadId) {
+      payload.thread_id = threadId;
+    } else if (dataSources && dataSources.length > 0) {
+      payload.source_ids = dataSources;
+    } else {
+      throw new Error('Must provide either threadId or dataSources array');
+    }
+    
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: await this._getHeaders(),
-      body: JSON.stringify({ dataSources }),
+      body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch recommendations: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to fetch recommendations: ${response.status} ${response.statusText}: ${await response.text()}`);
     }
     return response.json();
-    */
   }
 
   // Feedback API calls
@@ -381,6 +380,22 @@ export class CamelClient {
   }
 
   /**
+   * Fetch messages for a thread
+   * @param {string} threadId - The thread ID
+   * @returns {Promise<{messages: Array<Object>, thread: Object}>} Thread messages and metadata
+   * @throws {Error} If the request fails
+   */
+  async fetchThreadMessages(threadId) {
+    const response = await fetch(`${this.baseUrl}/api/v1/threads/${threadId}/messages`, {
+      headers: await this._getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch thread messages: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  /**
    * Delete a reference query from a connection
    * @param {string} connectionId - The connection ID
    * @param {string} referenceQueryId - The reference query ID to delete
@@ -509,6 +524,7 @@ export class CamelClient {
  * @property {Function} [onThreadRenamed] - Callback when thread is renamed
  * @property {Function} [onStreamUpdate] - Callback on stream updates
  * @property {Function} [onStatusUpdate] - Callback on status updates
+ * @property {Function} [onThreadDataFetched] - Callback when initial thread data is fetched
  */
 
 /**
@@ -538,6 +554,7 @@ export function useChat({
   onThreadRenamed,
   onStreamUpdate,
   onStatusUpdate,
+  onThreadDataFetched,
 }) {
   const clientRef = useRef(client);
   useEffect(() => {
@@ -558,6 +575,22 @@ export function useChat({
     };
   }, []);
 
+  // Fetch existing thread messages if initialThreadId is provided and no initialMessages
+  useEffect(() => {
+    if (initialThreadId && initialMessages.length === 0) {
+      clientRef.current.fetchThreadMessages(initialThreadId)
+        .then(data => {
+          if (data.messages) {
+            setMessages(data.messages);
+          }
+          onThreadDataFetched?.(data);
+        })
+        .catch(error => {
+          console.error('Failed to fetch thread messages:', error);
+        });
+    }
+  }, [initialThreadId, initialMessages.length]);
+
   /**
    * Send a message to the server
    * @param {string} message - Message content
@@ -571,7 +604,7 @@ export function useChat({
     setIsLoading(true);
 
     const payload = {
-      threadId,
+      ...(threadId && { thread_id: threadId }),
       model,
       message,
       source_id: selectedDataSourcesIDs[0],
@@ -625,8 +658,9 @@ export function useChat({
       });
 
       sse.addEventListener('thread_created', event => {
-        const { threadId } = JSON.parse(event.data);
-        setThreadId(threadId);
+        const { thread_id } = JSON.parse(event.data);
+        setThreadId(thread_id);
+        onThreadCreated?.({ threadId: thread_id });
       });
 
       sse.addEventListener('thread_renamed', event => {
