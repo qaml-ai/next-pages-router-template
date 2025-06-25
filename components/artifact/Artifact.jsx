@@ -3,7 +3,6 @@ import ArtifactContent from './ArtifactContent';
 import {
     XMarkIcon,
     ArrowTopRightOnSquareIcon,
-    ArrowPathIcon,
     ArrowDownTrayIcon,
     ArrowsPointingOutIcon,
     ArrowsPointingInIcon,
@@ -13,9 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getDatabaseLogo } from '../images';
 
-function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFirstArtifact, isLastArtifact, hasArtifacts }) {
-    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-    const [isRefreshing, setIsRefreshing] = useState(false);
+function Artifact({ artifact, isZoomed, onClose, onCycle, onZoom, isFirstArtifact, isLastArtifact, hasArtifacts }) {
     const [availableContentTypes, setAvailableContentTypes] = useState([]);
     const [activeContentType, setActiveContentType] = useState('output');
 
@@ -23,14 +20,12 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
     const [dashboards, setDashboards] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoadingDashboards, setIsLoadingDashboards] = useState(false);
-    const [selectedDashboard, setSelectedDashboard] = useState(null);
     const [error, setError] = useState(null);
     const [savedToDashboardId, setSavedToDashboardId] = useState(null);
     const [newDashboardTitle, setNewDashboardTitle] = useState('');
     const [showNewDashboardForm, setShowNewDashboardForm] = useState(false);
 
     // New state for RBAC compatibility warning
-    const [isCheckingCompatibility, setIsCheckingCompatibility] = useState(false);
     const [compatibilityWarning, setCompatibilityWarning] = useState(null);
     const [dashboardToConfirm, setDashboardToConfirm] = useState(null);
 
@@ -89,9 +84,6 @@ function Artifact({ artifact, isActive, isZoomed, onClose, onCycle, onZoom, isFi
         setActiveContentType(contentType);
     };
 
-    const toggleDescription = () => {
-        setIsDescriptionExpanded(!isDescriptionExpanded);
-    };
 
     // Function to fetch dashboards
     const fetchDashboards = async () => {

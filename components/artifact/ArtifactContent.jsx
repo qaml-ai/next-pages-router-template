@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
-function ArtifactContent({ artifact, activeContentType, onContentTypeChange }) {
+function ArtifactContent({ artifact, activeContentType }) {
     const [plotlyData, setPlotlyData] = useState(null);
     const [isDarkMode, setIsDarkMode] = useState(
         window.matchMedia('(prefers-color-scheme: dark)').matches

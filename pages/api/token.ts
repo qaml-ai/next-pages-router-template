@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  let uid = "0";
+  const uid = "0";
 
   // 🔐 Require auth to your own app (TODO: replace with real session lookup)
   // const session = (req as any).session;
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // 1️⃣  Exchange API key for short-lived token
-    const tokenPayload: any = { srcs: sources, uid: uid };
+    const tokenPayload = { srcs: sources, uid: uid };
     
     const stsResp = await fetch(CAMELAI_STS_URL, {
       method: 'POST',

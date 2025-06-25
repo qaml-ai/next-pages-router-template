@@ -3,13 +3,13 @@ import mkImport from '@vscode/markdown-it-katex'; const mk = mkImport.default ||
 import hljs from 'highlight.js';
 
 const md = new markdownit({
-    highlight: function (str, lang) {
+    highlight: function (str) {
         return hljs.highlightAuto(str).value;
     }
 });
 
 // Override default code block rendering
-md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+md.renderer.rules.fence = (tokens, idx) => {
     const token = tokens[idx];
     const langName = token.info.trim().split(/\s+/g)[0];
     const highlighted = hljs.highlightAuto(token.content).value;

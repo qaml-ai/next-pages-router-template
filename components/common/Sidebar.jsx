@@ -54,7 +54,7 @@ function Sidebar({ userData }) {
 
     return (
         <>
-            {threads.map((threadInfo, index) => {
+            {threads.map((threadInfo) => {
                 const isActive = activeThreadId == threadInfo.id;
                 const category = getDateCategory(threadInfo.last_modified);
 

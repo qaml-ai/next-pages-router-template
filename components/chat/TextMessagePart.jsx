@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderMarkdown } from '../utils/markdown';
 
-const TextMessagePart = React.memo(({ content, role, artifactDataMap }) => {
+const TextMessagePart = React.memo(function TextMessagePart({ content, role, artifactDataMap }) {
     if (role === "user") {
         return (
             <div className="user-message-text">

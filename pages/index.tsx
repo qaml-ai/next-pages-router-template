@@ -1,17 +1,17 @@
 import type { GetServerSideProps } from 'next'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import App from '../components/chat/App'
 import { CamelClient } from '../components/camelClient'
 
 interface IndexProps {
-  initialMessages: any[]
-  availableModels: Record<string, any>
-  connectedApps: any[]
+  initialMessages: unknown[]
+  availableModels: Record<string, { name: string; description: string }>
+  connectedApps: unknown[]
   threadID: string | null
   modelOverride: string | null
   selectedDataSource: string | null
-  userData: any
+  userData: { id: number | null; name: string; email: string | null }
   clientOverride: { apiUrl: string } | CamelClient | null
   error?: { type: 'API_KEY_MISSING' | 'API_ERROR'; message: string }
 }
@@ -77,7 +77,6 @@ export default function Index({
   connectedApps,
   threadID,
   modelOverride,
-  selectedDataSource,
   userData,
   clientOverride: clientOverrideProp,
   error,
@@ -85,28 +84,32 @@ export default function Index({
   const [isMounted, setIsMounted] = useState(false);
   const [selectedDs, setSelectedDs] = useState<string | null>(null);
   const [tempSelectedDs, setTempSelectedDs] = useState<string | null>(null);
-  const [dataSources, setDataSources] = useState<any[]>([]);
+  const [dataSources, setDataSources] = useState<Array<{ id: number; account_name?: string; type: string }>>([]);
   const [isLoadingDataSources, setIsLoadingDataSources] = useState(false);
   const [dataSourceError, setDataSourceError] = useState<string | null>(null);
   const router = useRouter();
 
-  const getAccessToken = async () => {
+  const getAccessToken = useCallback(async () => {
     const response = await fetch('/api/token', { 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
     return response.ok ? response.text() : null;
-  };
+  }, []);
 
   // Create client override if apiUrl is provided from server
-  const clientOverride = clientOverrideProp instanceof CamelClient 
-    ? clientOverrideProp 
-    : clientOverrideProp?.apiUrl 
-      ? new CamelClient(getAccessToken, clientOverrideProp.apiUrl) 
-      : null;
+  const clientOverride = useMemo(() => {
+    if (clientOverrideProp instanceof CamelClient) {
+      return clientOverrideProp;
+    }
+    if (clientOverrideProp?.apiUrl) {
+      return new CamelClient(getAccessToken, clientOverrideProp.apiUrl);
+    }
+    return null;
+  }, [clientOverrideProp, getAccessToken]);
 
   // Fetch data sources on client side
-  const fetchDataSources = async () => {
+  const fetchDataSources = useCallback(async () => {
     if (error) return; // Don't fetch if there's already an API key error
     
     setIsLoadingDataSources(true);
@@ -122,7 +125,7 @@ export default function Index({
     } finally {
       setIsLoadingDataSources(false);
     }
-  };
+  }, [error, clientOverride, getAccessToken]);
 
   useEffect(() => { 
     setIsMounted(true);
@@ -131,13 +134,13 @@ export default function Index({
     if (!error) {
       fetchDataSources();
     }
-  }, [error]);
+  }, [error, fetchDataSources]);
 
   useEffect(() => {
     // Set temp selected data source from localStorage once data sources are loaded
     if (dataSources.length > 0) {
       const lastSelected = localStorage.getItem('lastSelectedDataSource');
-      if (lastSelected && dataSources.some(ds => ds.id === lastSelected)) {
+      if (lastSelected && dataSources.some(ds => ds.id.toString() === lastSelected)) {
         setTempSelectedDs(lastSelected);
       }
     }
@@ -292,7 +295,7 @@ export default function Index({
               >
                 <option value="" disabled>Choose a data source</option>
                 {dataSources.map((ds) => (
-                  <option key={ds.id} value={ds.id}>
+                  <option key={ds.id} value={ds.id.toString()}>
                     {ds.account_name || ds.type}
                   </option>
                 ))}
@@ -373,13 +376,13 @@ const defaultProps = {
 
 export const getServerSideProps: GetServerSideProps<IndexProps> = async (context) => {
   const apiKey = process.env.CAMEL_API_KEY;
-  const threadIdFromQuery = context.query.threadId as number | undefined;
+  const threadIdFromQuery = context.query.threadId ? Number(context.query.threadId) : undefined;
   
   if (!apiKey) {
     return {
       props: {
         ...defaultProps,
-        threadID: threadIdFromQuery || null,
+        threadID: threadIdFromQuery ?? null,
         error: {
           type: 'API_KEY_MISSING',
           message: 'The CAMEL_API_KEY environment variable is not set. Please configure it to use this application.'

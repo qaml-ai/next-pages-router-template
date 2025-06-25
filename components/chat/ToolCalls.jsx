@@ -11,9 +11,7 @@ import {
 import { renderMarkdown } from '../utils/markdown';
 import { getDatabaseLogo } from '../images';
 
-const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => {
-    if (tool_calls.length === 0) return null;
-
+const ToolCalls = React.memo(function ToolCalls({ tool_calls, connectedApps }) {
     const renderToolCall = useCallback((tool_call) => {
         let input = tool_call.input || {};
         input.description = input.description || '';
@@ -216,7 +214,7 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
                                                 aria-label="Search"
                                             />
                                         </div>
-                                        Searching camelAI's memory
+                                        Searching camelAI&apos;s memory
                                     </div>
                                     <div className="tool-call-body-content">
                                         <div className="tool-call-search">
@@ -391,6 +389,8 @@ const ToolCalls = React.memo(({ tool_calls, scrollToBottom, connectedApps }) => 
             </React.Fragment>
         );
     }, [connectedApps]);
+
+    if (tool_calls.length === 0) return null;
 
     return (
         <>

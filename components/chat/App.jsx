@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
 // Import child components
 import ChatMessage from './ChatMessage';
@@ -10,13 +10,9 @@ import { useChat } from '../camelClient';
 // Import Heroicons
 // Outline icons
 import {
-    XMarkIcon,
-    BookOpenIcon,
-    PlusCircleIcon,
     ChartBarIcon,
     CheckIcon,
     ChevronUpIcon,
-    PlusIcon,
 } from '@heroicons/react/24/outline';
 // Filled (solid) icons
 import {
@@ -42,7 +38,6 @@ function App({
     const prevMessages = useRef([]);
     const [inputMessage, setInputMessage] = useState('');
     const chatContainerRef = useRef(null);
-    const [threadData, setThreadData] = useState(null);
     const [model, setModel] = useState(() => {
         if (modelOverride && availableModels[modelOverride]) {
             return modelOverride;
@@ -62,22 +57,22 @@ function App({
 
     // -------------- scroll to bottom stuff
     // Add helper function to check if user is near bottom
-    const isNearBottom = (duringToolCall = false) => {
+    const isNearBottom = useCallback((duringToolCall = false) => {
         if (!chatContainerRef.current) return true;
         const container = chatContainerRef.current;
         const threshold = duringToolCall ? 200 : 100; // pixels from bottom
         const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
         return distanceFromBottom <= threshold;
-    };
+    }, []);
 
     // Modify scrollToBottom to handle forced scrolls
-    const scrollToBottom = (force = false) => {
+    const scrollToBottom = useCallback((force = false) => {
         if (chatContainerRef.current && (force || isNearBottom())) {
             setTimeout(() => {
                 chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
             }, 0);
         }
-    };
+    }, [isNearBottom]);
 
     // Create camelClient instance with useMemo to persist across renders
     // Token caching is now handled inside the CamelClient itself
@@ -113,7 +108,7 @@ function App({
                 scrollToBottom();
             }
         },
-        onStatusUpdate: (type) => {
+        onStatusUpdate: () => {
             // Handle scroll on status updates
             if (isNearBottom()) {
                 scrollToBottom();
@@ -121,7 +116,6 @@ function App({
         },
         onThreadDataFetched: (data) => {
             if (data.thread) {
-                setThreadData(data.thread);
                 if (data.thread.model && availableModels[data.thread.model]) {
                     setModel(data.thread.model);
                 }
@@ -142,13 +136,12 @@ function App({
             const saved = localStorage.getItem(`dataSources_null`);
             setSelectedDataSourcesIDs(saved ? JSON.parse(saved) : connectedApps[0]?.id ? [connectedApps[0].id] : []);
         }
-    }, []);
+    }, [connectedApps, selectedDataSource]);
 
     useEffect(() => {
         if (selectedDataSourcesIDs.length > 0) localStorage.setItem(`dataSources_null`, JSON.stringify(selectedDataSourcesIDs));
     }, [selectedDataSourcesIDs]);
 
-    const selectedDataSources = connectedApps.filter(app => selectedDataSourcesIDs.includes(app.id));
     const isThreadLocked = !!threadId;
     // New state to track expanded/collapsed state for tool message groups
     const [expandedGroups, setExpandedGroups] = useState({});
@@ -332,7 +325,7 @@ function App({
     }, []);
 
     // ------------ CHAT RECOMMENDATIONS
-    const fetchRecommendations = async () => {
+    const fetchRecommendations = useCallback(async () => {
         setIsLoadingRecommendations(true);
         try {
             // Use different endpoint based on whether there's a thread
@@ -350,7 +343,7 @@ function App({
         } finally {
             setIsLoadingRecommendations(false);
         }
-    };
+    }, [client, threadId, selectedDataSourcesIDs, scrollToBottom]);
 
     // Update useEffect to clear recommendations when streaming starts
     useEffect(() => {
@@ -364,12 +357,11 @@ function App({
 
             fetchRecommendations();
         }
-    }, [isStreaming, selectedDataSourcesIDs]);
-
+    }, [isStreaming, selectedDataSourcesIDs, fetchRecommendations]);
 
     // ------------ KEYBOARD SHORTCUTS  for: popups
     // Add this helper function
-    const placeCursorAtEnd = (el) => {
+    const placeCursorAtEnd = useCallback((el) => {
         el.focus();
         if (typeof window.getSelection != "undefined"
             && typeof document.createRange != "undefined") {
@@ -380,7 +372,7 @@ function App({
             sel.removeAllRanges();
             sel.addRange(range);
         }
-    };
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event) => {

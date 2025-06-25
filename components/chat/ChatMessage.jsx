@@ -3,7 +3,7 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import TextMessagePart from './TextMessagePart';
 import ToolCalls from './ToolCalls';
 
-const ChatMessage = ({ message, prevMessage, isLatestMessage, scrollToBottom, threadId, isStreaming, isFinalMessage, connectedApps, artifactDataMap }) => {
+const ChatMessage = ({ message, scrollToBottom, isFinalMessage, connectedApps, artifactDataMap }) => {
     let { content, role, artifacts } = message;
     if (role === 'hidden' || role === 'developer') return null;
     let tool_calls = [];
