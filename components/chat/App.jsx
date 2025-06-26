@@ -114,7 +114,7 @@ function App({
                 scrollToBottom();
             }
         },
-        onThreadDataFetched: (data) => {
+        onThreadDataFetched: useCallback((data) => {
             if (data.thread) {
                 if (data.thread.model && availableModels[data.thread.model]) {
                     setModel(data.thread.model);
@@ -123,7 +123,7 @@ function App({
                     setSelectedDataSourcesIDs(data.thread.connection_ids);
                 }
             }
-        },
+        }, [availableModels]),
     });
 
     const userMessages = useMemo(() => messages.filter(msg => msg.role === 'user').reverse(), [messages]);
@@ -518,11 +518,10 @@ function App({
                                             </div>
                                         </div>
                                         <div className={`tool-messages ${expandedGroups[group.id] === false ? 'collapsed' : ''}`}>
-                                            {group.tool_messages.map((message, index, filteredMessages) => (
+                                            {group.tool_messages.map((message) => (
                                                 <ChatMessage
                                                     key={message.id}
                                                     message={message}
-                                                    scrollToBottom={scrollToBottom}
                                                     isFinalMessage={false}
                                                     connectedApps={connectedApps}
                                                     artifactDataMap={artifactDataMap}
@@ -536,7 +535,6 @@ function App({
                                         <ChatMessage
                                             key={group.final_message.id}
                                             message={group.final_message}
-                                            scrollToBottom={scrollToBottom}
                                             isFinalMessage={true}
                                             connectedApps={connectedApps}
                                             artifactDataMap={artifactDataMap}
