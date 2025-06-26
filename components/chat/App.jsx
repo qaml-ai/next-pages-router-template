@@ -522,11 +522,7 @@ function App({
                                                 <ChatMessage
                                                     key={message.id}
                                                     message={message}
-                                                    prevMessage={filteredMessages[index - 1]}
-                                                    isLatestMessage={index === filteredMessages.length - 1}
                                                     scrollToBottom={scrollToBottom}
-                                                    threadId={threadId}
-                                                    isStreaming={isStreaming}
                                                     isFinalMessage={false}
                                                     connectedApps={connectedApps}
                                                     artifactDataMap={artifactDataMap}
@@ -540,11 +536,7 @@ function App({
                                         <ChatMessage
                                             key={group.final_message.id}
                                             message={group.final_message}
-                                            prevMessage={null}
-                                            isLatestMessage={false}
                                             scrollToBottom={scrollToBottom}
-                                            threadId={threadId}
-                                            isStreaming={isStreaming}
                                             isFinalMessage={true}
                                             connectedApps={connectedApps}
                                             artifactDataMap={artifactDataMap}

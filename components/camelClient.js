@@ -589,7 +589,7 @@ export function useChat({
           console.error('Failed to fetch thread messages:', error);
         });
     }
-  }, [initialThreadId, initialMessages.length, onThreadDataFetched]);
+  }, [initialThreadId, initialMessages.length]);
 
   /**
    * Send a message to the server

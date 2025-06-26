@@ -38,7 +38,7 @@ const ChatMessage = ({ message, scrollToBottom, isFinalMessage, connectedApps, a
                 {content && !tool_calls.length && <TextMessagePart key={message.id} content={content} role={role} />}
 
                 {/* Renders the tool calls of the message. */}
-                <ToolCalls tool_calls={tool_calls} scrollToBottom={scrollToBottom} connectedApps={connectedApps} />
+                <ToolCalls tool_calls={tool_calls} connectedApps={connectedApps} />
                 {/* Renders the mini artifacts done in the analysis. */}
                 {artifacts.length > 0 && (
                     <>
